@@ -1,12 +1,4 @@
--- =====================================================================
--- Seed: Chroniques de Stonetop
--- =====================================================================
--- Cible      : grimoire avec invite_code = 'sc-pwf'
--- Ajoute     : 6 lieux + 2 PJs (Yshan, Alvar) + 40 PNJs + ~78 relations
--- À exécuter : Supabase Dashboard → SQL Editor → New query → coller → Run
--- Idempotent : NON. Re-exécuter dupliquera les données.
---              Pour réinitialiser, voir le DELETE commenté en bas du fichier.
--- =====================================================================
+
 
 DO $$
 DECLARE
@@ -77,14 +69,14 @@ BEGIN
     (v_space_id, 'Yshan', 'Hunter', 'PJ', v_loc_stonetop,
      'Jeune chasseur de Stonetop. Formé par Eluned (la traqueuse) et Gethin (le capitaine). Connaît la Wood et les Flats comme sa poche, et brûle de voir les terres au-delà du village.',
      '[{"label":"eagle-eye","checked":true},{"label":"has a way with animals","checked":true},{"label":"curious","checked":true}]'::jsonb,
-     ARRAY['village','military','hunter']
+     '["village","military","hunter"]'::jsonb
     ) RETURNING id INTO v_yshan;
 
   INSERT INTO characters (space_id, name, role, type, location, notes, traits, tags) VALUES
     (v_space_id, 'Alvar', 'Trader / Caravan Master', 'PJ', v_loc_stonetop,
      'Marchand itinérant basé à Stonetop. Excellents contacts à Barrier Pass (Quent, Reegn of the Gate, Nanzl). En conflit ouvert avec la guilde de voleurs de Marshedge (Katlin Greymantle, Finnen Dusk) qui bénéficie de la protection tacite de la ville. Plusieurs villageois partagent son inimitié envers Marshedge (Sioned, Iorwerth).',
      '[{"label":"well-traveled","checked":true},{"label":"has a beef with Marshedge","checked":true},{"label":"gets the best deals","checked":true}]'::jsonb,
-     ARRAY['village','trade','commerce']
+     '["village","trade","commerce"]'::jsonb
     ) RETURNING id INTO v_alvar;
 
   -- ---------------------------------------------------------------
@@ -94,121 +86,121 @@ BEGIN
     (v_space_id, 'Bryn Kettler', 'Publican', 'PNJ', v_loc_stonetop,
      'Keeps a ledger of every debt in town.',
      '[{"label":"cheery","checked":true},{"label":"knows all the gossip","checked":true}]'::jsonb,
-     ARRAY['village','commerce']) RETURNING id INTO v_bryn;
+     '["village","commerce"]'::jsonb) RETURNING id INTO v_bryn;
 
   INSERT INTO characters (space_id, name, role, type, location, notes, traits, tags) VALUES
     (v_space_id, 'Marged Kettler', 'Midwife', 'PNJ', v_loc_stonetop,
      'Delivered half the village.',
      '[{"label":"tender-hearted","checked":true},{"label":"has terrible nightmares","checked":true}]'::jsonb,
-     ARRAY['village','healer']) RETURNING id INTO v_marged;
+     '["village","healer"]'::jsonb) RETURNING id INTO v_marged;
 
   INSERT INTO characters (space_id, name, role, type, location, notes, traits, tags) VALUES
     (v_space_id, 'Hywel Croft', 'Smith', 'PNJ', v_loc_stonetop,
      'Dreams of forging a blade worthy of a hero.',
      '[{"label":"stubborn","checked":true},{"label":"ambitious","checked":true}]'::jsonb,
-     ARRAY['village','craftsman']) RETURNING id INTO v_hywel;
+     '["village","craftsman"]'::jsonb) RETURNING id INTO v_hywel;
 
   INSERT INTO characters (space_id, name, role, type, location, notes, traits, tags) VALUES
     (v_space_id, 'Eluned Vann', 'Tanner', 'PNJ', v_loc_stonetop,
      'Knows every beast''s hide by smell alone.',
      '[{"label":"stoic","checked":true},{"label":"eagle-eye","checked":true}]'::jsonb,
-     ARRAY['village','craftsman']) RETURNING id INTO v_eluned;
+     '["village","craftsman"]'::jsonb) RETURNING id INTO v_eluned;
 
   INSERT INTO characters (space_id, name, role, type, location, notes, traits, tags) VALUES
     (v_space_id, 'Cadoc Ffin', 'Elder / Village Leader', 'PNJ', v_loc_stonetop,
      'Slow to decide; refuses to be rushed.',
      '[{"label":"cautious","checked":true},{"label":"gods-fearing","checked":true}]'::jsonb,
-     ARRAY['village','authority']) RETURNING id INTO v_cadoc;
+     '["village","authority"]'::jsonb) RETURNING id INTO v_cadoc;
 
   INSERT INTO characters (space_id, name, role, type, location, notes, traits, tags) VALUES
     (v_space_id, 'Ceridwyn Ash', 'Potter', 'PNJ', v_loc_stonetop,
      'Hides Fae tokens in her kiln.',
      '[{"label":"curious","checked":true},{"label":"gifted storyteller","checked":true}]'::jsonb,
-     ARRAY['village','craftsman']) RETURNING id INTO v_ceridwyn;
+     '["village","craftsman"]'::jsonb) RETURNING id INTO v_ceridwyn;
 
   INSERT INTO characters (space_id, name, role, type, location, notes, traits, tags) VALUES
     (v_space_id, 'Gethin Holt', 'Hunter / Militia Captain', 'PNJ', v_loc_stonetop,
      'Yshan''s de facto hunting superior.',
      '[{"label":"fearless","checked":true},{"label":"has a lot of backbone","checked":true}]'::jsonb,
-     ARRAY['village','military']) RETURNING id INTO v_gethin;
+     '["village","military"]'::jsonb) RETURNING id INTO v_gethin;
 
   INSERT INTO characters (space_id, name, role, type, location, notes, traits, tags) VALUES
     (v_space_id, 'Dilwen Sparr', 'Farmer', 'PNJ', v_loc_stonetop,
      'Always blames last season''s weather.',
      '[{"label":"overprotective","checked":true},{"label":"doesn''t pull their weight","checked":true}]'::jsonb,
-     ARRAY['village','farming']) RETURNING id INTO v_dilwen;
+     '["village","farming"]'::jsonb) RETURNING id INTO v_dilwen;
 
   INSERT INTO characters (space_id, name, role, type, location, notes, traits, tags) VALUES
     (v_space_id, 'Iorwerth Bach', 'Distiller', 'PNJ', v_loc_stonetop,
      'His whisky is Alvar''s best trade good.',
      '[{"label":"drunkard","checked":true},{"label":"gets the best deals","checked":true}]'::jsonb,
-     ARRAY['village','commerce']) RETURNING id INTO v_iorwerth;
+     '["village","commerce"]'::jsonb) RETURNING id INTO v_iorwerth;
 
   INSERT INTO characters (space_id, name, role, type, location, notes, traits, tags) VALUES
     (v_space_id, 'Sioned Wren', 'Weaver', 'PNJ', v_loc_stonetop,
      'Lost a profitable contract to a Marshedge guild.',
      '[{"label":"ambitious","checked":true},{"label":"has a beef with Marshedge","checked":true}]'::jsonb,
-     ARRAY['village','craftsman']) RETURNING id INTO v_sioned;
+     '["village","craftsman"]'::jsonb) RETURNING id INTO v_sioned;
 
   INSERT INTO characters (space_id, name, role, type, location, notes, traits, tags) VALUES
     (v_space_id, 'Padrig Stone', 'Grain Keeper', 'PNJ', v_loc_stonetop,
      'Counts every oat, twice.',
      '[{"label":"jealous","checked":true},{"label":"immaculate appearance","checked":true}]'::jsonb,
-     ARRAY['village','authority']) RETURNING id INTO v_padrig;
+     '["village","authority"]'::jsonb) RETURNING id INTO v_padrig;
 
   INSERT INTO characters (space_id, name, role, type, location, notes, traits, tags) VALUES
     (v_space_id, 'Enfys Daw', 'Herbalist', 'PNJ', v_loc_stonetop,
      'Speaks to plants — most say she''s harmless.',
      '[{"label":"gathers herbs from the Wood","checked":true},{"label":"touched","checked":true}]'::jsonb,
-     ARRAY['village','healer']) RETURNING id INTO v_enfys;
+     '["village","healer"]'::jsonb) RETURNING id INTO v_enfys;
 
   INSERT INTO characters (space_id, name, role, type, location, notes, traits, tags) VALUES
     (v_space_id, 'Emrys Tal', 'Shepherd / Scout', 'PNJ', v_loc_stonetop,
      'Came back from the Ruined Tower wrong.',
      '[{"label":"has lost their nerve","checked":true},{"label":"reckless","checked":true}]'::jsonb,
-     ARRAY['village','military']) RETURNING id INTO v_emrys;
+     '["village","military"]'::jsonb) RETURNING id INTO v_emrys;
 
   INSERT INTO characters (space_id, name, role, type, location, notes, traits, tags) VALUES
     (v_space_id, 'Rhosyn Carr', 'Innkeeper', 'PNJ', v_loc_stonetop,
      'Was a trader in Lygos before settling here.',
      '[{"label":"beloved by everyone","checked":true},{"label":"well-traveled","checked":true}]'::jsonb,
-     ARRAY['village','commerce']) RETURNING id INTO v_rhosyn;
+     '["village","commerce"]'::jsonb) RETURNING id INTO v_rhosyn;
 
   INSERT INTO characters (space_id, name, role, type, location, notes, traits, tags) VALUES
     (v_space_id, 'Owain Fenn', 'Carter / Teamster', 'PNJ', v_loc_stonetop,
      'Knows every rut between here and Gordin''s Delve.',
      '[{"label":"happy-go-lucky","checked":true},{"label":"will eat anything","checked":true}]'::jsonb,
-     ARRAY['village','trade']) RETURNING id INTO v_owain;
+     '["village","trade"]'::jsonb) RETURNING id INTO v_owain;
 
   INSERT INTO characters (space_id, name, role, type, location, notes, traits, tags) VALUES
     (v_space_id, 'Talfryn Moss', 'Militia Spearman', 'PNJ', v_loc_stonetop,
      'Excellent at looking brave from a distance.',
      '[{"label":"cowardly","checked":true},{"label":"sensitive","checked":true}]'::jsonb,
-     ARRAY['village','military']) RETURNING id INTO v_talfryn;
+     '["village","military"]'::jsonb) RETURNING id INTO v_talfryn;
 
   INSERT INTO characters (space_id, name, role, type, location, notes, traits, tags) VALUES
     (v_space_id, 'Gaenor Wick', 'Chandler', 'PNJ', v_loc_stonetop,
      'Sells tallow candles and information equally.',
      '[{"label":"best cook","checked":true},{"label":"curious","checked":true}]'::jsonb,
-     ARRAY['village','craftsman']) RETURNING id INTO v_gaenor;
+     '["village","craftsman"]'::jsonb) RETURNING id INTO v_gaenor;
 
   INSERT INTO characters (space_id, name, role, type, location, notes, traits, tags) VALUES
     (v_space_id, 'Bedwyr Cloch', 'Stonecutter', 'PNJ', v_loc_stonetop,
      'Knows the Old Wall better than anyone alive.',
      '[{"label":"very strong","checked":true},{"label":"simpleton","checked":true}]'::jsonb,
-     ARRAY['village','craftsman']) RETURNING id INTO v_bedwyr;
+     '["village","craftsman"]'::jsonb) RETURNING id INTO v_bedwyr;
 
   INSERT INTO characters (space_id, name, role, type, location, notes, traits, tags) VALUES
     (v_space_id, 'Aeronwen Glas', 'Keeper of the Pavilion', 'PNJ', v_loc_stonetop,
      'Never lies; always cryptic.',
      '[{"label":"tends the Gods'' Pavilion","checked":true},{"label":"hears voices","checked":true}]'::jsonb,
-     ARRAY['village','religious']) RETURNING id INTO v_aeronwen;
+     '["village","religious"]'::jsonb) RETURNING id INTO v_aeronwen;
 
   INSERT INTO characters (space_id, name, role, type, location, notes, traits, tags) VALUES
     (v_space_id, 'Caron Tyn', 'Farmer / Surplus Hoarder', 'PNJ', v_loc_stonetop,
      'Buries grain every autumn, just in case.',
      '[{"label":"prideful","checked":true},{"label":"distrustful","checked":true}]'::jsonb,
-     ARRAY['village','farming']) RETURNING id INTO v_caron;
+     '["village","farming"]'::jsonb) RETURNING id INTO v_caron;
 
   -- ---------------------------------------------------------------
   -- 4. PNJs Hillfolk (5)
@@ -217,31 +209,31 @@ BEGIN
     (v_space_id, 'Davth Ironshoulder', 'Hunter-chief', 'PNJ', v_loc_steplands,
      'Tests visitors with impossible requests.',
      '[{"label":"stoic","checked":true},{"label":"tests strangers","checked":true}]'::jsonb,
-     ARRAY['hillfolk','military']) RETURNING id INTO v_davth;
+     '["hillfolk","military"]'::jsonb) RETURNING id INTO v_davth;
 
   INSERT INTO characters (space_id, name, role, type, location, notes, traits, tags) VALUES
     (v_space_id, 'Elst Two-Spears', 'Warrior', 'PNJ', v_loc_steplands,
      'Has a scar for every crinwin she''s slain.',
      '[{"label":"fearless","checked":true},{"label":"reckless","checked":true}]'::jsonb,
-     ARRAY['hillfolk','military']) RETURNING id INTO v_elst;
+     '["hillfolk","military"]'::jsonb) RETURNING id INTO v_elst;
 
   INSERT INTO characters (space_id, name, role, type, location, notes, traits, tags) VALUES
     (v_space_id, 'Gwilm the Old', 'Elder / Lorekeeper', 'PNJ', v_loc_steplands,
      'Remembers names of things the village has forgotten.',
      '[{"label":"well-read","checked":true},{"label":"swears they met the Pale Hunter","checked":true}]'::jsonb,
-     ARRAY['hillfolk','religious']) RETURNING id INTO v_gwilm;
+     '["hillfolk","religious"]'::jsonb) RETURNING id INTO v_gwilm;
 
   INSERT INTO characters (space_id, name, role, type, location, notes, traits, tags) VALUES
     (v_space_id, 'Nolwn Driftfoot', 'Outrider', 'PNJ', v_loc_steplands,
      'Scouts aurochs herds and sells the intel.',
      '[{"label":"moved here recently","checked":true},{"label":"curious","checked":true}]'::jsonb,
-     ARRAY['hillfolk','trade']) RETURNING id INTO v_nolwn;
+     '["hillfolk","trade"]'::jsonb) RETURNING id INTO v_nolwn;
 
   INSERT INTO characters (space_id, name, role, type, location, notes, traits, tags) VALUES
     (v_space_id, 'Reegn Ashhand', 'Shaman', 'PNJ', v_loc_steplands,
      'Blames Stonetop for something old.',
      '[{"label":"dallied with the Fae years ago","checked":true},{"label":"humorless","checked":true}]'::jsonb,
-     ARRAY['hillfolk','religious']) RETURNING id INTO v_reegn_hill;
+     '["hillfolk","religious"]'::jsonb) RETURNING id INTO v_reegn_hill;
 
   -- ---------------------------------------------------------------
   -- 5. PNJs Gordin's Delve (4)
@@ -250,25 +242,25 @@ BEGIN
     (v_space_id, 'Marika Dolvar', 'Mine Foreman', 'PNJ', v_loc_delve,
      'Wants a trade route Alvar can help open.',
      '[{"label":"ambitious","checked":true},{"label":"craves recognition","checked":true}]'::jsonb,
-     ARRAY['delve','authority']) RETURNING id INTO v_marika;
+     '["delve","authority"]'::jsonb) RETURNING id INTO v_marika;
 
   INSERT INTO characters (space_id, name, role, type, location, notes, traits, tags) VALUES
     (v_space_id, 'Iasos Tuck', 'Metal Merchant', 'PNJ', v_loc_delve,
      'Controls the iron Stonetop needs.',
      '[{"label":"gets the best deals","checked":true},{"label":"jealous","checked":true}]'::jsonb,
-     ARRAY['delve','trade']) RETURNING id INTO v_iasos;
+     '["delve","trade"]'::jsonb) RETURNING id INTO v_iasos;
 
   INSERT INTO characters (space_id, name, role, type, location, notes, traits, tags) VALUES
     (v_space_id, 'Iona Darkseam', 'Smuggler', 'PNJ', v_loc_delve,
      'Knows the thieves'' guild in Marshedge personally.',
      '[{"label":"keeps to themselves","checked":true},{"label":"lame","checked":true}]'::jsonb,
-     ARRAY['delve','criminal']) RETURNING id INTO v_iona;
+     '["delve","criminal"]'::jsonb) RETURNING id INTO v_iona;
 
   INSERT INTO characters (space_id, name, role, type, location, notes, traits, tags) VALUES
     (v_space_id, 'Ailen Roughcut', 'Miner / Informant', 'PNJ', v_loc_delve,
      'Sells gossip as freely as ore.',
      '[{"label":"foundling","checked":true},{"label":"tells the best jokes","checked":true}]'::jsonb,
-     ARRAY['delve','trade']) RETURNING id INTO v_ailen;
+     '["delve","trade"]'::jsonb) RETURNING id INTO v_ailen;
 
   -- ---------------------------------------------------------------
   -- 6. PNJs Marshedge (5)
@@ -277,31 +269,31 @@ BEGIN
     (v_space_id, 'Katlin Greymantle', 'Guild Enforcer', 'PNJ', v_loc_marshedge,
      'The guild''s fist in a silk glove.',
      '[{"label":"likes to hurt things","checked":true},{"label":"immaculate appearance","checked":true}]'::jsonb,
-     ARRAY['marshedge','criminal']) RETURNING id INTO v_katlin;
+     '["marshedge","criminal"]'::jsonb) RETURNING id INTO v_katlin;
 
   INSERT INTO characters (space_id, name, role, type, location, notes, traits, tags) VALUES
     (v_space_id, 'Mathuin Tallow', 'Merchant', 'PNJ', v_loc_marshedge,
      'Pays the guild for protection he pretends not to need.',
      '[{"label":"cowardly","checked":true},{"label":"has a wandering eye","checked":true}]'::jsonb,
-     ARRAY['marshedge','trade']) RETURNING id INTO v_mathuin;
+     '["marshedge","trade"]'::jsonb) RETURNING id INTO v_mathuin;
 
   INSERT INTO characters (space_id, name, role, type, location, notes, traits, tags) VALUES
     (v_space_id, 'Finnen Dusk', 'Guild Spymaster', 'PNJ', v_loc_marshedge,
      'Knows Alvar''s name, face, and route.',
      '[{"label":"well-traveled","checked":true},{"label":"humorless","checked":true}]'::jsonb,
-     ARRAY['marshedge','criminal']) RETURNING id INTO v_finnen;
+     '["marshedge","criminal"]'::jsonb) RETURNING id INTO v_finnen;
 
   INSERT INTO characters (space_id, name, role, type, location, notes, traits, tags) VALUES
     (v_space_id, 'Isbeal Marsh', 'Herbalist / Fence', 'PNJ', v_loc_marshedge,
      'Fences stolen goods in medicinal jars.',
      '[{"label":"good with children","checked":true},{"label":"keeps to themselves","checked":true}]'::jsonb,
-     ARRAY['marshedge','criminal','healer']) RETURNING id INTO v_isbeal;
+     '["marshedge","criminal","healer"]'::jsonb) RETURNING id INTO v_isbeal;
 
   INSERT INTO characters (space_id, name, role, type, location, notes, traits, tags) VALUES
     (v_space_id, 'Seann Tidewatcher', 'River Guard', 'PNJ', v_loc_marshedge,
      'Looks the other way for the right coin.',
      '[{"label":"not afraid of deep water","checked":true},{"label":"loyal friend","checked":true}]'::jsonb,
-     ARRAY['marshedge','military']) RETURNING id INTO v_seann;
+     '["marshedge","military"]'::jsonb) RETURNING id INTO v_seann;
 
   -- ---------------------------------------------------------------
   -- 7. PNJs Barrier Pass (5)
@@ -310,31 +302,31 @@ BEGIN
     (v_space_id, 'Quent Farlander', 'Merchant', 'PNJ', v_loc_pass,
      'Alvar''s main contact beyond the mountains.',
      '[{"label":"well-traveled","checked":true},{"label":"happy-go-lucky","checked":true}]'::jsonb,
-     ARRAY['pass','trade']) RETURNING id INTO v_quent;
+     '["pass","trade"]'::jsonb) RETURNING id INTO v_quent;
 
   INSERT INTO characters (space_id, name, role, type, location, notes, traits, tags) VALUES
     (v_space_id, 'Reegn of the Gate', 'Gatekeeper', 'PNJ', v_loc_pass,
      'Writes down every name that passes through.',
      '[{"label":"gods-fearing","checked":true},{"label":"cautious","checked":true}]'::jsonb,
-     ARRAY['pass','authority']) RETURNING id INTO v_reegn_gate;
+     '["pass","authority"]'::jsonb) RETURNING id INTO v_reegn_gate;
 
   INSERT INTO characters (space_id, name, role, type, location, notes, traits, tags) VALUES
     (v_space_id, 'Loic Gravel', 'Smuggler / Guide', 'PNJ', v_loc_pass,
      'Knows three paths the gate doesn''t.',
      '[{"label":"reckless","checked":true},{"label":"runs everywhere","checked":true}]'::jsonb,
-     ARRAY['pass','criminal','trade']) RETURNING id INTO v_loic;
+     '["pass","criminal","trade"]'::jsonb) RETURNING id INTO v_loic;
 
   INSERT INTO characters (space_id, name, role, type, location, notes, traits, tags) VALUES
     (v_space_id, 'Nanzl the Broker', 'Information Broker', 'PNJ', v_loc_pass,
      'Sells futures, not just news.',
      '[{"label":"gifted storyteller","checked":true},{"label":"craves recognition","checked":true}]'::jsonb,
-     ARRAY['pass','trade']) RETURNING id INTO v_nanzl;
+     '["pass","trade"]'::jsonb) RETURNING id INTO v_nanzl;
 
   INSERT INTO characters (space_id, name, role, type, location, notes, traits, tags) VALUES
     (v_space_id, 'Yanz Coldfoot', 'Mercenary Guard', 'PNJ', v_loc_pass,
      'Available for hire; expensive; worth it.',
      '[{"label":"stoic","checked":true},{"label":"slew many crinwin","checked":true}]'::jsonb,
-     ARRAY['pass','military']) RETURNING id INTO v_yanz;
+     '["pass","military"]'::jsonb) RETURNING id INTO v_yanz;
 
   -- ---------------------------------------------------------------
   -- 8. PNJ Other (1)
@@ -343,7 +335,7 @@ BEGIN
     (v_space_id, 'Cerrn the Unmapped', 'Cartographer', 'PNJ', v_loc_other,
      'Claims to have mapped the Pale Hunter''s territory.',
      '[{"label":"has their head in the clouds","checked":true},{"label":"well-read","checked":true}]'::jsonb,
-     ARRAY['other','trade']) RETURNING id INTO v_cerrn;
+     '["other","trade"]'::jsonb) RETURNING id INTO v_cerrn;
 
   -- ---------------------------------------------------------------
   -- 9. Relations (~78, dédupliquées)
