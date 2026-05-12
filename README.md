@@ -39,9 +39,9 @@ Your group joins a shared space with an invite code and password. Everyone can c
 
 - [x] French to English
 - [x] Mobile layout improvements
-- [Need testing] Supabase sync for real-time collaboration
+- [ ] Supabase sync for real-time collaboration - Need some testing
 - [ ] Improving graph view
-- [ ] Timeline view for campaign events
+- [ ] Timeline view for campaign events - Thinking about it
 
 
 
