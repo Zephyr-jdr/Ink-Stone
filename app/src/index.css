@@ -1,0 +1,451 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* =====================================================================
+   Encre & Pierre — Design System
+   Inspiration : papier ancien, encre noire, tampons grunge.
+   ===================================================================== */
+
+@layer base {
+  :root {
+    /* Palette principale (cf. UI design.png) */
+    --bg-primary: #EBE5DA;        /* Papier vieilli — fond global */
+    --bg-secondary: #E0D8CA;      /* Papier texturé — sections */
+    --bg-card: #F7F2E8;           /* Carte papier */
+    --bg-card-alt: #F0EADD;       /* Variante de carte plus chaude */
+    --bg-paper-grain: #EFE8D7;    /* Pour zones avec grain */
+
+    --text-primary: #1B1B1B;      /* Encre noire */
+    --text-secondary: #4A4A4A;    /* Encre adoucie */
+    --text-muted: #8C8279;        /* Texte secondaire / labels */
+    --text-inverse: #F7F2E8;      /* Texte sur fond noir (papier clair) */
+
+    --border-subtle: #D6CFC4;     /* Filets fins */
+    --border-paper: #C9C0B1;      /* Filets plus marqués (cadres) */
+    --border-focus: #1B1B1B;      /* Focus / hover */
+
+    --accent-primary: #1B1B1B;    /* Encre noire (boutons, type PJ) */
+    --accent-hover: #000000;      /* Encre profonde */
+
+    --tag-bg: #EBE5DA;
+    --tag-text: #5A5A5A;
+
+    --ink-dot: #1B1B1B;
+    --paper-shadow: rgba(28, 22, 14, 0.08);
+
+    --graph-line: #6A6258;
+    --graph-node-bg: #F0EADD;
+    --graph-node-border: #1B1B1B;
+
+    /* shadcn/ui — overrides cohérents */
+    --background: 38 26% 89%;
+    --foreground: 0 0% 11%;
+    --card: 38 32% 94%;
+    --card-foreground: 0 0% 11%;
+    --popover: 38 32% 94%;
+    --popover-foreground: 0 0% 11%;
+    --primary: 0 0% 11%;
+    --primary-foreground: 38 32% 94%;
+    --secondary: 37 18% 83%;
+    --secondary-foreground: 0 0% 11%;
+    --muted: 37 18% 83%;
+    --muted-foreground: 30 8% 50%;
+    --accent: 37 18% 83%;
+    --accent-foreground: 0 0% 11%;
+    --destructive: 0 50% 42%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 33 16% 80%;
+    --input: 33 16% 80%;
+    --ring: 0 0% 11%;
+    --radius: 0.5rem;
+  }
+
+  * { @apply border-border; }
+
+  html, body, #root {
+    min-height: 100%;
+  }
+
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    color: var(--text-primary);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+
+    background-color: var(--bg-primary);
+    /* Grain de papier subtil sur tout le fond */
+    background-image:
+      radial-gradient(circle at 18% 24%, rgba(160, 140, 100, 0.08) 0, transparent 40%),
+      radial-gradient(circle at 82% 70%, rgba(120, 100, 70, 0.07) 0, transparent 45%),
+      url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.04 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+    background-attachment: fixed;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Playfair Display', Georgia, serif;
+    color: var(--text-primary);
+  }
+}
+
+/* =====================================================================
+   Typographie & utilitaires
+   ===================================================================== */
+@layer utilities {
+  .font-display {
+    font-family: 'Playfair Display', Georgia, serif;
+  }
+  .font-body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+
+  .label-overline {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--text-muted);
+  }
+
+  /* Fond papier réutilisable */
+  .bg-parchment {
+    background-color: var(--bg-primary);
+    background-image:
+      radial-gradient(circle at 20% 30%, rgba(160, 140, 100, 0.08), transparent 45%),
+      radial-gradient(circle at 80% 70%, rgba(120, 100, 70, 0.07), transparent 50%);
+  }
+
+  .bg-paper-card {
+    background-color: var(--bg-card);
+    background-image:
+      url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.035 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  }
+
+  .text-ink {
+    color: var(--text-primary);
+  }
+
+  /* Séparateur horizontal style "trait avec sceau au milieu" */
+  .seal-divider {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    color: var(--text-muted);
+  }
+  .seal-divider::before,
+  .seal-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(
+      to right,
+      transparent 0%,
+      var(--border-paper) 30%,
+      var(--border-paper) 70%,
+      transparent 100%
+    );
+  }
+}
+
+/* =====================================================================
+   Composants — boutons grunge / cartes encre
+   ===================================================================== */
+@layer components {
+  /* Bouton noir avec léger grain (look "tampon encre") */
+  .btn-ink {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.7rem 1.4rem;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-inverse);
+    background-color: var(--accent-primary);
+    border: 1px solid var(--accent-primary);
+    border-radius: 0.55rem;
+    cursor: pointer;
+    transition: transform 0.18s ease, background-color 0.18s ease, box-shadow 0.18s ease;
+    background-image:
+      url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='1.2' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='1 0 0 0 0.06  0 1 0 0 0.06  0 0 1 0 0.06  0 0 0 0.18 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+    background-blend-mode: screen;
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.6) inset, 0 4px 14px var(--paper-shadow);
+  }
+  .btn-ink:hover {
+    transform: translateY(-1px);
+    background-color: #000;
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.6) inset, 0 6px 18px rgba(0, 0, 0, 0.18);
+  }
+  .btn-ink:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  /* Bouton secondaire (contour) */
+  .btn-outline {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.7rem 1.4rem;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    background-color: transparent;
+    border: 1px solid var(--text-primary);
+    border-radius: 0.55rem;
+    cursor: pointer;
+    transition: background-color 0.18s ease, transform 0.18s ease;
+  }
+  .btn-outline:hover {
+    background-color: rgba(28, 22, 14, 0.05);
+    transform: translateY(-1px);
+  }
+
+  /* Bouton texte */
+  .btn-text {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: opacity 0.15s ease;
+  }
+  .btn-text:hover { opacity: 0.7; }
+
+  /* Carte papier classique */
+  .card-paper {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-paper);
+    border-radius: 0.75rem;
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.6) inset,
+      0 8px 24px -12px var(--paper-shadow);
+    background-image:
+      url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.04 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  }
+
+  /* Carte avec coins coupés (style "grand cadre") */
+  .card-paper-clipped {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-paper);
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.6) inset,
+      0 8px 24px -12px var(--paper-shadow);
+    clip-path: polygon(
+      14px 0, calc(100% - 14px) 0, 100% 14px,
+      100% calc(100% - 14px), calc(100% - 14px) 100%,
+      14px 100%, 0 calc(100% - 14px), 0 14px
+    );
+  }
+
+  /* Carte de relation type "tampon encre" — la signature de l'UI */
+  .relation-stamp {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1rem 1.2rem;
+    background-color: var(--accent-primary);
+    color: var(--text-inverse);
+    border-radius: 0.6rem;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    overflow: hidden;
+    isolation: isolate;
+    background-image:
+      url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='320' height='320'><filter id='ink'><feTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='1 0 0 0 0.05  0 1 0 0 0.05  0 0 1 0 0.05  0 0 0 0.32 0'/></filter><rect width='100%25' height='100%25' filter='url(%23ink)'/></svg>");
+    background-blend-mode: screen;
+    box-shadow: 0 6px 18px -8px rgba(0, 0, 0, 0.35);
+  }
+  .relation-stamp::before {
+    content: '';
+    position: absolute;
+    inset: 3px;
+    border-radius: 0.45rem;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    pointer-events: none;
+  }
+  .relation-stamp:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px -8px rgba(0, 0, 0, 0.45);
+  }
+  .relation-stamp .stamp-name {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-weight: 700;
+    font-size: 1.4rem;
+    line-height: 1.1;
+    letter-spacing: 0.01em;
+  }
+  .relation-stamp .stamp-sub {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.78rem;
+    color: rgba(247, 242, 232, 0.75);
+    margin-top: 0.15rem;
+    letter-spacing: 0.01em;
+  }
+  .relation-stamp .stamp-arrow {
+    flex-shrink: 0;
+    color: rgba(247, 242, 232, 0.85);
+    transition: transform 0.2s ease, color 0.2s ease;
+  }
+  .relation-stamp:hover .stamp-arrow {
+    color: #fff;
+    transform: translate(2px, -2px);
+  }
+
+  /* Tag pilule avec petit point (cf. "• Ville", "• Faction" sur l'image) */
+  .tag-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.25rem 0.7rem;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: 9999px;
+    line-height: 1.2;
+  }
+  .tag-pill::before {
+    content: '';
+    display: inline-block;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background-color: var(--ink-dot);
+  }
+
+  /* Champ de saisie style papier */
+  .field-paper {
+    width: 100%;
+    height: 2.75rem;
+    padding: 0 0.95rem;
+    font-family: 'Inter', sans-serif;
+    color: var(--text-primary);
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-paper);
+    border-radius: 0.55rem;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    outline: none;
+  }
+  .field-paper:focus {
+    border-color: var(--border-focus);
+    box-shadow: 0 0 0 3px rgba(28, 22, 14, 0.08);
+  }
+  .field-paper::placeholder { color: var(--text-muted); }
+
+  /* Texte longueur (textarea) */
+  .field-paper-area {
+    width: 100%;
+    padding: 0.8rem 0.95rem;
+    font-family: 'Inter', sans-serif;
+    color: var(--text-primary);
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-paper);
+    border-radius: 0.55rem;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    outline: none;
+    resize: vertical;
+  }
+  .field-paper-area:focus {
+    border-color: var(--border-focus);
+    box-shadow: 0 0 0 3px rgba(28, 22, 14, 0.08);
+  }
+}
+
+/* =====================================================================
+   TipTap (éditeur riche)
+   ===================================================================== */
+.ProseMirror {
+  outline: none;
+  min-height: 120px;
+}
+.ProseMirror p { margin-bottom: 0.75rem; line-height: 1.6; }
+.ProseMirror p:last-child { margin-bottom: 0; }
+.ProseMirror ul { list-style-type: disc; padding-left: 1.5rem; margin-bottom: 0.75rem; }
+.ProseMirror ol { list-style-type: decimal; padding-left: 1.5rem; margin-bottom: 0.75rem; }
+.ProseMirror strong { font-weight: 600; }
+.ProseMirror em { font-style: italic; }
+
+/* =====================================================================
+   Scrollbars discrètes
+   ===================================================================== */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border-subtle); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+/* =====================================================================
+   Animations
+   ===================================================================== */
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes scaleIn { from { opacity: 0; transform: scale(0.96); } to { opacity: 1; transform: scale(1); } }
+@keyframes drift {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(-3px, 2px); }
+}
+
+/* =====================================================================
+   Graph (custom SVG-based, voir GraphCanvas.tsx)
+   ===================================================================== */
+.graph-canvas {
+  width: 100%;
+  height: 100%;
+  background-color: var(--bg-primary);
+  background-image:
+    radial-gradient(circle at 30% 30%, rgba(160, 140, 100, 0.07), transparent 50%),
+    radial-gradient(circle at 70% 70%, rgba(120, 100, 70, 0.07), transparent 55%);
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
+}
+.graph-canvas.dragging { cursor: grabbing; }
+
+.graph-edge {
+  stroke: var(--graph-line);
+  fill: none;
+  stroke-linecap: round;
+  transition: stroke-opacity 0.2s ease, stroke-width 0.2s ease;
+}
+.graph-edge-label {
+  font-family: 'Inter', sans-serif;
+  font-size: 10px;
+  fill: var(--text-muted);
+  pointer-events: none;
+}
+
+.graph-node circle {
+  cursor: pointer;
+  transition: stroke-width 0.18s ease, filter 0.18s ease;
+}
+.graph-node:hover circle {
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.18));
+}
+.graph-node text {
+  font-family: 'Playfair Display', Georgia, serif;
+  fill: var(--text-primary);
+  pointer-events: none;
+  text-anchor: middle;
+  font-weight: 600;
+}
+.graph-node.is-pj text {
+  fill: var(--text-primary);
+}
+.graph-node.is-faded { opacity: 0.18; }
+.graph-edge.is-faded { stroke-opacity: 0.08; }
+.graph-edge.is-highlight { stroke-width: 2; stroke-opacity: 1; }

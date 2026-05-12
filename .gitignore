@@ -1,0 +1,29 @@
+# =====================================================================
+# Repo-level .gitignore
+# (app/.gitignore handles node_modules, dist, .env.local etc.)
+# =====================================================================
+
+# Private / internal docs — never push to GitHub
+tech-spec.md
+Playbook.pdf
+TODO_MISTRAL.md
+app/README.md
+app/info.md
+app/TODO_MISTRAL.md
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Lock file at root (we keep app/package-lock.json which is the real one)
+package-lock.json
+
+# Safety net (also covered by app/.gitignore)
+node_modules/
+dist/
+.env
+.env.local
+.env.*.local
+.vercel/
