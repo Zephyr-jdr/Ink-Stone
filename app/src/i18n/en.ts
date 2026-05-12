@@ -167,7 +167,7 @@ export const en: Dict = {
     space: 'Space',
     copyInvite: 'Copy invite link',
     inviteCopied: 'Invite link copied',
-    inviteCodeCopied: 'Invite code copied',
+    inviteCodeCopied: 'Login code copied',
     leave: 'Leave this space',
   },
 
@@ -202,7 +202,7 @@ export const en: Dict = {
   dashboard: {
     countOne: '{n} character',
     countOther: '{n} characters',
-    inviteCode: 'Invite code',
+    inviteCode: 'Login code',
     addCharacter: 'Add character',
     graphView: 'Graph view',
     manageLocations: 'Manage locations',

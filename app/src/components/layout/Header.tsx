@@ -1,5 +1,5 @@
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Link as LinkIcon, LogOut } from 'lucide-react';
+import { LogOut } from 'lucide-react';
 import { Logo } from '@/components/shared/Logo';
 import { LanguageToggle } from '@/components/shared/LanguageToggle';
 import { useAppStore } from '@/stores/appStore';
@@ -9,16 +9,8 @@ export function Header() {
   const t = useT();
   const navigate = useNavigate();
   const location = useLocation();
-  const { session, showToast, clearSession } = useAppStore();
+  const { session, clearSession } = useAppStore();
   const isAppPage = location.pathname !== '/';
-
-  const handleCopyInvite = () => {
-    if (session?.space.invite_code) {
-      const url = `${window.location.origin}?join=${session.space.invite_code}`;
-      navigator.clipboard.writeText(url);
-      showToast(t('header.inviteCopied'));
-    }
-  };
 
   const handleLogout = () => {
     clearSession();
@@ -39,13 +31,6 @@ export function Header() {
         <div className="flex items-center gap-3 sm:gap-4 min-w-0">
           {isAppPage && session && (
             <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
-              <button
-                onClick={handleCopyInvite}
-                className="p-1.5 text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors"
-                title={t('header.copyInvite')}
-              >
-                <LinkIcon size={16} />
-              </button>
               <div className="flex items-center gap-2 px-2.5 sm:px-3 py-1.5 bg-[var(--accent-primary)] rounded-full min-w-0">
                 <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 flex-shrink-0" />
                 <span className="text-[var(--text-inverse)] text-xs font-medium font-body truncate max-w-[100px] sm:max-w-[180px]">

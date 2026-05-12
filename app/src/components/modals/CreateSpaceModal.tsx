@@ -17,8 +17,8 @@ export function CreateSpaceModal({ isOpen, onClose }: CreateSpaceModalProps) {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [createdSpace, setCreatedSpace] = useState<{ name: string; invite_code: string } | null>(null);
-  const { createSpace } = useSpace();
+  const [createdSpace, setCreatedSpace] = useState<Awaited<ReturnType<ReturnType<typeof useSpace>['createSpace']>> | null>(null);
+  const { createSpace, enterSpace } = useSpace();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -33,7 +33,7 @@ export function CreateSpaceModal({ isOpen, onClose }: CreateSpaceModalProps) {
 
     try {
       const space = await createSpace(name.trim(), password);
-      setCreatedSpace({ name: space.name, invite_code: space.invite_code });
+      setCreatedSpace(space);
     } catch (err) {
       void err;
       setError(t('createSpace.errorGeneric'));
@@ -42,9 +42,13 @@ export function CreateSpaceModal({ isOpen, onClose }: CreateSpaceModalProps) {
     }
   };
 
+  // Called when the user acknowledges the login code modal — only THEN we enter the space.
   const handleSuccessClose = () => {
+    if (!createdSpace) return;
+    const space = createdSpace;
     setCreatedSpace(null);
     onClose();
+    enterSpace(space, true);
     navigate('/dashboard');
   };
 

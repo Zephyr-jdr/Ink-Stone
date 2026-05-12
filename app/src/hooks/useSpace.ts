@@ -1,16 +1,25 @@
 import { useCallback } from 'react';
 import { db } from '@/lib/db';
 import { useAppStore } from '@/stores/appStore';
+import type { Space } from '@/types';
 
 export function useSpace() {
   const { setSession } = useAppStore();
 
+  // Creates a space WITHOUT setting the session yet — caller decides when to enter.
   const createSpace = useCallback(
     async (name: string, password: string) => {
       const space = await db.createSpace(name, password);
-      const token = btoa(`${space.id}:${Date.now()}`);
-      setSession({ space, isAdmin: true, token });
       return space;
+    },
+    [],
+  );
+
+  // Enter a space (set the session). Use after createSpace once user acknowledges the login code.
+  const enterSpace = useCallback(
+    (space: Space, isAdmin: boolean) => {
+      const token = btoa(`${space.id}:${Date.now()}`);
+      setSession({ space, isAdmin, token });
     },
     [setSession],
   );
@@ -25,5 +34,5 @@ export function useSpace() {
     [setSession],
   );
 
-  return { createSpace, joinSpace };
+  return { createSpace, enterSpace, joinSpace };
 }

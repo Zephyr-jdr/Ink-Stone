@@ -68,7 +68,7 @@ export const fr: Dict = {
     space: 'Espace',
     copyInvite: 'Copier le lien d\'invitation',
     inviteCopied: 'Lien d\'invitation copié',
-    inviteCodeCopied: 'Code d\'invitation copié',
+    inviteCodeCopied: 'Code de connexion copié',
     leave: 'Quitter cet espace',
   },
 
@@ -103,7 +103,7 @@ export const fr: Dict = {
   dashboard: {
     countOne: '{n} personnage',
     countOther: '{n} personnages',
-    inviteCode: 'Code d\'invitation',
+    inviteCode: 'Code de connexion',
     addCharacter: 'Ajouter un personnage',
     graphView: 'Vue graphe',
     manageLocations: 'Gérer les lieux',
