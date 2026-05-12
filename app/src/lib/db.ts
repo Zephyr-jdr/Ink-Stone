@@ -43,7 +43,59 @@ async function createSpace(name: string, password: string): Promise<Space> {
   return localDb.createSpace({ name, invite_code, password_hash });
 }
 
+/**
+ * Suppression complète d'un grimoire — cascade.
+ *
+ *  - Vérifie le mot de passe contre `password_hash` du space.
+ *  - Supprime dans l'ordre relations → characters → locations → space.
+ *  - Côté Supabase, on s'en remet aux foreign keys `ON DELETE CASCADE` côté DB
+ *    si elles existent. Mais comme on ne peut pas en être sûr, on supprime
+ *    explicitement chaque table (idempotent : Supabase ignore les rows déjà absents).
+ *
+ * Throws ERR_WRONG_PASSWORD ou ERR_SPACE_NOT_FOUND.
+ */
+async function deleteSpace(spaceId: string, password: string): Promise<void> {
+  const sb = getSupabase();
+  if (sb) {
+    // 1. Récupérer le space pour vérifier le hash
+    const { data: space, error: e1 } = await sb
+      .from('spaces')
+      .select('id, password_hash')
+      .eq('id', spaceId)
+      .maybeSingle();
+    if (e1) throw e1;
+    if (!space) throw new Error(ERR_SPACE_NOT_FOUND);
+    if (!verifyPassword(password, (space as Space).password_hash)) {
+      throw new Error(ERR_WRONG_PASSWORD);
+    }
+
+    // 2. Cascade explicite (au cas où les FK n'auraient pas ON DELETE CASCADE)
+    const { error: er } = await sb.from('relations').delete().eq('space_id', spaceId);
+    if (er) throw er;
+    const { error: ec } = await sb.from('characters').delete().eq('space_id', spaceId);
+    if (ec) throw ec;
+    const { error: el } = await sb.from('locations').delete().eq('space_id', spaceId);
+    if (el) throw el;
+    const { error: es } = await sb.from('spaces').delete().eq('id', spaceId);
+    if (es) throw es;
+    return;
+  }
+
+  // localStorage backend
+  const local = localDb;
+  // On retrouve le space par id (pas d'API findSpaceById, on filtre en lecture)
+  const allSpaces =
+    JSON.parse(localStorage.getItem('inkstone_local_data') || '{}').spaces ?? [];
+  const target = allSpaces.find((s: Space) => s.id === spaceId);
+  if (!target) throw new Error(ERR_SPACE_NOT_FOUND);
+  if (!verifyPassword(password, target.password_hash)) {
+    throw new Error(ERR_WRONG_PASSWORD);
+  }
+  local.deleteSpace(spaceId);
+}
+
 async function joinSpace(inviteCode: string, password: string): Promise<Space> {
+
   const sb = getSupabase();
   if (sb) {
     const { data, error } = await sb
@@ -292,6 +344,8 @@ export const db = {
   // Spaces
   createSpace,
   joinSpace,
+  deleteSpace,
+
   // Locations
   getSpaceLocations,
   createLocation,

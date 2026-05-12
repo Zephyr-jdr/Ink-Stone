@@ -34,5 +34,15 @@ export function useSpace() {
     [setSession],
   );
 
-  return { createSpace, enterSpace, joinSpace };
+  // Supprime un grimoire (cascade) après vérification du mot de passe.
+  // Le caller est responsable de clear la session/router après succès.
+  const deleteSpace = useCallback(
+    async (spaceId: string, password: string) => {
+      await db.deleteSpace(spaceId, password);
+    },
+    [],
+  );
+
+  return { createSpace, enterSpace, joinSpace, deleteSpace };
 }
+

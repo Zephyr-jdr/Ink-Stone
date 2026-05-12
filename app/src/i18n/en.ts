@@ -44,6 +44,15 @@ export type Dict = {
     | 'emptySearch' | 'emptyAll',
     string
   >;
+  deleteSpace: Record<
+    | 'overline' | 'title' | 'sectionTitle' | 'sectionDescription' | 'button'
+    | 'warning' | 'warningCounts' | 'warningIrreversible'
+    | 'passwordLabel' | 'passwordPlaceholder' | 'confirmNameLabel'
+    | 'submit' | 'submitting' | 'deleted'
+    | 'errorWrongPassword' | 'errorGeneric',
+    string
+  >;
+
   character: Record<
     | 'sheetOverline' | 'notFound' | 'backToGrimoire' | 'delete' | 'deleteConfirm'
     | 'typePC' | 'typeNPC' | 'typePCFull' | 'typeNPCFull'
@@ -218,7 +227,29 @@ export const en: Dict = {
     emptyAll: 'The grimoire is empty. Add the first character.',
   },
 
+  deleteSpace: {
+    overline: 'Danger zone',
+    title: 'Delete this grimoire',
+    sectionTitle: 'Danger zone',
+    sectionDescription:
+      'Permanently delete this grimoire and all of its content. Players will lose access immediately.',
+    button: 'Delete this grimoire',
+    warning: 'You are about to delete "{name}".',
+    warningCounts:
+      'This will erase {characters} character(s), {relations} relation(s) and {locations} location(s).',
+    warningIrreversible: 'This action cannot be undone.',
+    passwordLabel: 'Grimoire password',
+    passwordPlaceholder: 'Re-enter the password',
+    confirmNameLabel: 'Type "{name}" to confirm',
+    submit: 'Delete forever',
+    submitting: 'Deleting…',
+    deleted: 'Grimoire "{name}" has been deleted',
+    errorWrongPassword: 'Wrong password',
+    errorGeneric: 'Something went wrong',
+  },
+
   character: {
+
     sheetOverline: 'Character sheet',
     notFound: 'Character not found…',
     backToGrimoire: 'Back to the grimoire',

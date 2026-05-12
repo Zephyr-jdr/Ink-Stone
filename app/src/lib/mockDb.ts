@@ -66,6 +66,17 @@ export const localDb = {
     return getData().spaces.find((s) => s.invite_code === code) ?? null;
   },
 
+  /** Suppression cascade : relations → characters → locations → space. */
+  deleteSpace(spaceId: string): void {
+    const data = getData();
+    data.relations  = data.relations.filter((r) => r.space_id !== spaceId);
+    data.characters = data.characters.filter((c) => c.space_id !== spaceId);
+    data.locations  = data.locations.filter((l) => l.space_id !== spaceId);
+    data.spaces     = data.spaces.filter((s) => s.id !== spaceId);
+    saveData(data);
+  },
+
+
   // ----- Locations -----
   getSpaceLocations(spaceId: string): Location[] {
     return getData().locations.filter((l) => l.space_id === spaceId);

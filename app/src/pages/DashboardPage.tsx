@@ -1,17 +1,20 @@
 import { useState, useMemo, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, GitGraph, Plus, Copy, MapPin, Settings } from 'lucide-react';
+import { Search, GitGraph, Plus, Copy, MapPin, Settings, Trash2, AlertTriangle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Header } from '@/components/layout/Header';
 import { CharacterCard } from '@/components/character/CharacterCard';
 import { CharacterForm } from '@/components/character/CharacterForm';
 import { LocationsManagerModal } from '@/components/locations/LocationsManagerModal';
+import { DeleteSpaceModal } from '@/components/modals/DeleteSpaceModal';
 import { Toast } from '@/components/shared/Toast';
 import { useAppStore } from '@/stores/appStore';
 import { useCharacters } from '@/hooks/useCharacters';
 import { useLocations } from '@/hooks/useLocations';
+import { useRelations } from '@/hooks/useRelations';
 import { FALLBACK_LOCATION_COLOR } from '@/lib/constants';
 import { useT } from '@/i18n';
+
 
 export default function DashboardPage() {
   const t = useT();
@@ -28,9 +31,12 @@ export default function DashboardPage() {
   } = useAppStore();
   const { characters } = useCharacters(session?.space.id);
   const { locations } = useLocations(session?.space.id);
+  const { relations } = useRelations(session?.space.id);
 
   const [showForm, setShowForm] = useState(false);
   const [showLocations, setShowLocations] = useState(false);
+  const [showDelete, setShowDelete] = useState(false);
+
 
   useEffect(() => {
     if (!session) navigate('/');
@@ -240,6 +246,41 @@ export default function DashboardPage() {
 
           </motion.div>
         )}
+
+        {/* ───────────── Danger zone ─────────────
+            Volontairement isolé en bas de page, encart rouge, encadré
+            par un séparateur. Le bouton n'agit que via la modale. */}
+        <motion.section
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.2 }}
+          className="mt-20 pt-10 border-t border-[var(--border-paper)]"
+          aria-labelledby="danger-zone-heading"
+        >
+          <div className="rounded-lg border border-red-300 bg-red-50/60 p-5">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              <div className="flex-1">
+                <h2
+                  id="danger-zone-heading"
+                  className="font-display text-lg font-semibold text-red-800 inline-flex items-center gap-2"
+                >
+                  <AlertTriangle size={16} />
+                  {t('deleteSpace.sectionTitle')}
+                </h2>
+                <p className="text-sm font-body text-red-700/90 mt-1">
+                  {t('deleteSpace.sectionDescription')}
+                </p>
+              </div>
+              <button
+                onClick={() => setShowDelete(true)}
+                className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-md font-medium font-body text-sm border border-red-700 text-red-700 hover:bg-red-700 hover:text-white transition-colors whitespace-nowrap"
+              >
+                <Trash2 size={14} />
+                {t('deleteSpace.button')}
+              </button>
+            </div>
+          </div>
+        </motion.section>
       </main>
 
       <AnimatePresence>
@@ -250,7 +291,19 @@ export default function DashboardPage() {
             onClose={() => setShowLocations(false)}
           />
         )}
+        {showDelete && session && (
+          <DeleteSpaceModal
+            isOpen={showDelete}
+            onClose={() => setShowDelete(false)}
+            spaceId={session.space.id}
+            spaceName={session.space.name}
+            charactersCount={characters.length}
+            relationsCount={relations.length}
+            locationsCount={locations.length}
+          />
+        )}
       </AnimatePresence>
+
 
       <Toast />
     </div>

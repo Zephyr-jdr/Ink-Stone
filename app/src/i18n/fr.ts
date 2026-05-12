@@ -119,7 +119,29 @@ export const fr: Dict = {
     emptyAll: 'Le grimoire est vierge. Inscrivez le premier personnage.',
   },
 
+  deleteSpace: {
+    overline: 'Zone de danger',
+    title: 'Supprimer ce grimoire',
+    sectionTitle: 'Zone de danger',
+    sectionDescription:
+      'Supprimer définitivement ce grimoire et tout son contenu. Les joueurs perdront immédiatement leur accès.',
+    button: 'Supprimer ce grimoire',
+    warning: 'Vous êtes sur le point de supprimer « {name} ».',
+    warningCounts:
+      'Cela effacera {characters} personnage(s), {relations} relation(s) et {locations} lieu(x).',
+    warningIrreversible: 'Cette action est irréversible.',
+    passwordLabel: 'Mot de passe du grimoire',
+    passwordPlaceholder: 'Re-saisir le mot de passe',
+    confirmNameLabel: 'Tapez « {name} » pour confirmer',
+    submit: 'Supprimer définitivement',
+    submitting: 'Suppression…',
+    deleted: 'Grimoire « {name} » supprimé',
+    errorWrongPassword: 'Mot de passe incorrect',
+    errorGeneric: 'Une erreur est survenue',
+  },
+
   character: {
+
     sheetOverline: 'Fiche de personnage',
     notFound: 'Personnage introuvable…',
     backToGrimoire: 'Retour au grimoire',
