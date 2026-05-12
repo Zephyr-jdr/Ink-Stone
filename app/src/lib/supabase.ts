@@ -9,8 +9,20 @@ let _client: SupabaseClient | null | undefined;
 /** Lazy singleton. `null` means "not configured → use the localStorage fallback". */
 export function getSupabase(): SupabaseClient | null {
   if (_client !== undefined) return _client;
-  const url = import.meta.env.VITE_SUPABASE_URL as string | undefined;
-  const key = import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined;
+
+  // Accept several common naming conventions for env vars:
+  //  - Vite-native:        VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY
+  //  - Next.js-style copy: VITE_NEXT_PUBLIC_SUPABASE_URL / VITE_NEXT_PUBLIC_SUPABASE_ANON_KEY
+  //  - New Supabase keys:  VITE_NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY (sb_publishable_*)
+  const env = import.meta.env as Record<string, string | undefined>;
+  const url =
+    env.VITE_SUPABASE_URL ??
+    env.VITE_NEXT_PUBLIC_SUPABASE_URL;
+  const key =
+    env.VITE_SUPABASE_ANON_KEY ??
+    env.VITE_NEXT_PUBLIC_SUPABASE_ANON_KEY ??
+    env.VITE_NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+
   if (!url || !key) {
     _client = null;
     return null;
