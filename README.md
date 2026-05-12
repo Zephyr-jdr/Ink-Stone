@@ -30,12 +30,11 @@ Your group joins a shared space with an invite code and password. Everyone can c
 - **Graph view** (Sigma.js) — nodes colored by location, edges by relationship type, PC nodes larger than NPCs. Hover to highlight connections, click to open the sheet
 - **Customizable locations** —  filter the grimoire by location
 
-
 ## [Official Website](https://inkandstone.space/)
 
----
+[![MINI TUTORIAL](screenshots/youtube.jpg)](https://www.youtube.com/watch?v=I6ND4R85OGk)
 
-[![MINI TUTORIAL](https://img.youtube.com/vi/TON_ID_VIDEO/maxresdefault.jpg)](https://www.youtube.com/watch?v=I6ND4R85OGk)
+---
 
 ## Roadmap
 
