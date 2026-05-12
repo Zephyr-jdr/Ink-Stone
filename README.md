@@ -16,9 +16,9 @@ Your group joins a shared space with an invite code and password. Everyone can c
 ## Screenshots
 
 <!-- Replace with your actual screenshots -->
-| Character sheet | Graph view | Location filter |
+| Main screen | Graph view | Character sheet |
 |---|---|---|
-| ![sheet](screenshots/sheet.jpg) | ![graph](screenshots/graph.jpg) | ![filter](screenshots/sheet.jpg) |
+| ![sheet](screenshots/screen.jpg) | ![graph](screenshots/graph.jpg) | ![filter](screenshots/sheet.jpg) |
 
 ---
 
