@@ -31,7 +31,18 @@ Your group joins a shared space with an invite code and password. Everyone can c
 - **Customizable locations** —  filter the grimoire by location
 
 
-## Try the demo
+## [Official Website](https://inkandstone.space/)
+
+---
+
+## Roadmap
+
+- [x] French to English
+- [x] Mobile layout improvements
+- [ ] Supabase sync for real-time collaboration - Need some testing
+- [ ] Improving graph view
+- [ ] Timeline view for campaign events - Thinking about it
+
 
 
 
