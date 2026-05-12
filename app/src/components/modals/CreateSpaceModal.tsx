@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useSpace } from '@/hooks/useSpace';
 import { useNavigate } from 'react-router-dom';
 import { useT } from '@/i18n';
+import { SpaceCreatedModal } from './SpaceCreatedModal';
 
 interface CreateSpaceModalProps {
   isOpen: boolean;
@@ -16,6 +17,7 @@ export function CreateSpaceModal({ isOpen, onClose }: CreateSpaceModalProps) {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [createdSpace, setCreatedSpace] = useState<{ name: string; invite_code: string } | null>(null);
   const { createSpace } = useSpace();
   const navigate = useNavigate();
 
@@ -30,16 +32,20 @@ export function CreateSpaceModal({ isOpen, onClose }: CreateSpaceModalProps) {
     setError('');
 
     try {
-      await createSpace(name.trim(), password);
-      navigate('/dashboard');
-      onClose();
+      const space = await createSpace(name.trim(), password);
+      setCreatedSpace({ name: space.name, invite_code: space.invite_code });
     } catch (err) {
-      // Underlying mockDb errors are not localised; show generic translation.
       void err;
       setError(t('createSpace.errorGeneric'));
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleSuccessClose = () => {
+    setCreatedSpace(null);
+    onClose();
+    navigate('/dashboard');
   };
 
   return (
@@ -110,6 +116,14 @@ export function CreateSpaceModal({ isOpen, onClose }: CreateSpaceModalProps) {
             </form>
           </motion.div>
         </motion.div>
+      )}
+      {createdSpace && (
+        <SpaceCreatedModal
+          isOpen={!!createdSpace}
+          spaceName={createdSpace.name}
+          loginCode={createdSpace.invite_code}
+          onClose={handleSuccessClose}
+        />
       )}
     </AnimatePresence>
   );

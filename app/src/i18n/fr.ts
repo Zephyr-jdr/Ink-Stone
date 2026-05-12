@@ -36,15 +36,31 @@ export const fr: Dict = {
     description2:
       'Conçu pour ma table de Stonetop et Vampire. Adaptable à tous les univers.',
     create: {
-      title: 'Créer un espace',
-      subtitle: 'Pour le MJ. Donnez un nom à votre groupe et un mot de passe à partager.',
+      title: 'Créer un grimoire commun',
+      subtitle: 'Commencez un nouveau grimoire partagé',
       cta: 'Fonder le grimoire',
     },
     join: {
-      title: 'Rejoindre',
-      subtitle: 'Pour les joueurs. Collez le lien (ou le code) et le mot de passe.',
+      title: 'Se connecter à un grimoire',
+      subtitle: 'Rejoignez un grimoire existant',
       cta: 'Ouvrir les pages',
     },
+    footer: {
+      reportBug: 'Signaler un bug ou suggérer une fonctionnalité',
+      supportKofi: 'Soutenir le projet sur Ko-fi',
+    },
+  },
+
+  spaceCreated: {
+    overline: 'Succès',
+    title: 'Grimoire créé !',
+    nameLabel: 'Nom',
+    loginCodeLabel: 'Code de connexion',
+    copyCode: 'Copier',
+    copied: 'Copié !',
+    warningTitle: 'IMPORTANT',
+    warningText: 'Conservez ce code ! Vous et vos joueurs en aurez besoin pour vous reconnecter. Vous le retrouverez aussi sous le titre de votre grimoire.',
+    gotIt: 'J\'ai noté',
   },
 
   header: {

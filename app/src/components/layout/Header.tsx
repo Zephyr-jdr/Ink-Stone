@@ -41,14 +41,7 @@ export function Header() {
             <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
               <button
                 onClick={handleCopyInvite}
-                className="hidden sm:inline-flex items-center gap-2 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.15em] text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors"
-              >
-                <LinkIcon size={14} />
-                <span>{t('header.space')}</span>
-              </button>
-              <button
-                onClick={handleCopyInvite}
-                className="sm:hidden p-1.5 text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors"
+                className="p-1.5 text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors"
                 title={t('header.copyInvite')}
               >
                 <LinkIcon size={16} />

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { ArrowUpRight } from 'lucide-react';
+import { ArrowUpRight, Github, Coffee } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Logo } from '@/components/shared/Logo';
 import { LanguageToggle } from '@/components/shared/LanguageToggle';
@@ -92,8 +92,30 @@ export default function HomePage() {
         </div>
       </main>
 
-      <footer className="py-8 px-6 max-w-6xl mx-auto w-full flex items-center justify-center">
-        <LanguageToggle />
+      <footer className="py-8 px-6 max-w-6xl mx-auto w-full">
+        <div className="flex flex-col items-center gap-4">
+          <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-6 text-sm text-[var(--text-muted)]">
+            <a
+              href="https://github.com/Zephyr-jdr/Ink-Stone/issues"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 hover:text-[var(--text-primary)] hover:underline transition-colors"
+            >
+              <Github size={16} />
+              <span>{t('home.footer.reportBug')}</span>
+            </a>
+            <a
+              href="https://ko-fi.com/zephyrjdr"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 hover:text-[var(--text-primary)] hover:underline transition-colors"
+            >
+              <Coffee size={16} />
+              <span>{t('home.footer.supportKofi')}</span>
+            </a>
+          </div>
+          <LanguageToggle />
+        </div>
       </footer>
 
       <CreateSpaceModal isOpen={showCreate} onClose={() => setShowCreate(false)} />

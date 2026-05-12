@@ -16,7 +16,13 @@ export type Dict = {
     description2: string;
     create: { title: string; subtitle: string; cta: string };
     join: { title: string; subtitle: string; cta: string };
+    footer: { reportBug: string; supportKofi: string };
   };
+  spaceCreated: Record<
+    | 'overline' | 'title' | 'nameLabel' | 'loginCodeLabel' | 'copyCode'
+    | 'copied' | 'warningTitle' | 'warningText' | 'gotIt',
+    string
+  >;
   header: Record<'home' | 'space' | 'copyInvite' | 'inviteCopied' | 'inviteCodeCopied' | 'leave', string>;
   createSpace: Record<
     | 'overline' | 'title' | 'nameLabel' | 'namePlaceholder'
@@ -129,15 +135,31 @@ export const en: Dict = {
     description2:
       'Built for my Stonetop and Vampire table. Works for any setting.',
     create: {
-      title: 'Create a space',
-      subtitle: 'For the GM. Pick a name for your group and a password to share.',
+      title: 'Create a shared grimoire',
+      subtitle: 'Start a new shared grimoire',
       cta: 'Open the grimoire',
     },
     join: {
-      title: 'Join',
-      subtitle: 'For players. Paste the link (or code) and the password.',
+      title: 'Join an existing grimoire',
+      subtitle: 'Connect to a grimoire',
       cta: 'Turn the page',
     },
+    footer: {
+      reportBug: 'Report a bug or suggest a feature',
+      supportKofi: 'Support the project on Ko-fi',
+    },
+  },
+
+  spaceCreated: {
+    overline: 'Success',
+    title: 'Grimoire created!',
+    nameLabel: 'Name',
+    loginCodeLabel: 'Login code',
+    copyCode: 'Copy',
+    copied: 'Copied!',
+    warningTitle: 'IMPORTANT',
+    warningText: 'Keep this code! You and your players will need it to reconnect. You\'ll also find it below your grimoire\'s title.',
+    gotIt: 'Got it',
   },
 
   header: {
