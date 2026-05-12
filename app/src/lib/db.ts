@@ -223,32 +223,63 @@ async function deleteRelation(id: string): Promise<void> {
 // Realtime — subscribe to all space-scoped changes.
 //
 // Returns an unsubscribe function. Works with both backends:
-//  - Supabase: opens a single channel for characters/relations/locations.
+//  - Supabase: a SINGLE channel per space is shared between hooks
+//              (useCharacters / useLocations / useRelations).
+//              Multiple `.on('postgres_changes', ...)` callbacks cannot
+//              be added AFTER `.subscribe()`, so we reuse a registry of
+//              listeners and only build the channel once per space.
 //  - localStorage: falls back to a 1 s polling loop.
 // ----------------------------------------------------------------------
+type SbChannelEntry = {
+  // We keep `unknown` to avoid coupling our public API to a specific
+  // realtime client type while still owning a stable handle for cleanup.
+  ch: unknown;
+  listeners: Set<() => void>;
+};
+const _channelsBySpace: Map<string, SbChannelEntry> = new Map();
+
 export function subscribeSpace(spaceId: string, onChange: () => void): () => void {
   const sb = getSupabase();
   if (sb) {
-    const ch = sb
-      .channel(`space-${spaceId}`)
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'characters', filter: `space_id=eq.${spaceId}` },
-        onChange,
-      )
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'relations', filter: `space_id=eq.${spaceId}` },
-        onChange,
-      )
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'locations', filter: `space_id=eq.${spaceId}` },
-        onChange,
-      )
-      .subscribe();
+    let entry = _channelsBySpace.get(spaceId);
+
+    if (!entry) {
+      const listeners = new Set<() => void>();
+      const fanout = () => listeners.forEach((fn) => fn());
+
+      const ch = sb
+        .channel(`space-${spaceId}`)
+        .on(
+          'postgres_changes',
+          { event: '*', schema: 'public', table: 'characters', filter: `space_id=eq.${spaceId}` },
+          fanout,
+        )
+        .on(
+          'postgres_changes',
+          { event: '*', schema: 'public', table: 'relations', filter: `space_id=eq.${spaceId}` },
+          fanout,
+        )
+        .on(
+          'postgres_changes',
+          { event: '*', schema: 'public', table: 'locations', filter: `space_id=eq.${spaceId}` },
+          fanout,
+        )
+        .subscribe();
+
+      entry = { ch, listeners };
+      _channelsBySpace.set(spaceId, entry);
+    }
+
+    entry.listeners.add(onChange);
+
     return () => {
-      sb.removeChannel(ch);
+      const e = _channelsBySpace.get(spaceId);
+      if (!e) return;
+      e.listeners.delete(onChange);
+      if (e.listeners.size === 0) {
+        sb.removeChannel(e.ch as Parameters<typeof sb.removeChannel>[0]);
+        _channelsBySpace.delete(spaceId);
+      }
     };
   }
   return localDb.subscribe(spaceId, onChange);
