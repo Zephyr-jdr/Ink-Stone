@@ -33,7 +33,7 @@ Your group joins a shared space with an invite code and password. Everyone can c
 
 ## Try the demo
 
----
 
-Help me improving the project !
+
+
 [![Ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)]((https://ko-fi.com/zephyrjdr))
