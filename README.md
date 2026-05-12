@@ -33,6 +33,17 @@ Your group joins a shared space with an invite code and password. Everyone can c
 
 ## [Official Website](https://inkandstone.space/)
 
+---
+
+## Roadmap
+
+- [x] French to English
+- [x] Mobile layout improvements
+- [Need testing] Supabase sync for real-time collaboration
+- [ ] Improving graph view
+- [ ] Timeline view for campaign events
+
+
 
 
 
