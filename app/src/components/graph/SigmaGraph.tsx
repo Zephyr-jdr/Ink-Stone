@@ -79,6 +79,12 @@ export function SigmaGraph({
   // nœud sous DOUBLE_TAP_MS : navigation. Tap ailleurs : highlight transféré.
   const lastTapNodeRef = useRef<string | null>(null);
   const lastTapTimeRef = useRef<number>(0);
+  // Timestamp du dernier event tactile. Sigma émet un `clickNode`
+  // synthétique après chaque tap (ghost click) qui déclencherait la
+  // navigation au 1er tap, court-circuitant le pattern double-tap.
+  // On filtre `clickNode` dans la fenêtre [touchend ; touchend + 500ms].
+  const lastTouchAtRef = useRef<number>(0);
+
 
 
 
@@ -298,8 +304,15 @@ export function SigmaGraph({
     renderer.on('clickNode', ({ node }) => {
       // Empêche un click parasite après un drag réel
       if (isDraggingRef.current) return;
+      // Ghost click post-tap : Sigma émet un `clickNode` synthétique
+      // après chaque touchend (≈ 100-300ms plus tard). On l'ignore dans
+      // une fenêtre de 500ms après le dernier event tactile, pour que
+      // la logique double-tap d'`onTouchEndNative` garde la main.
+      // Sur desktop, lastTouchAtRef = 0 → cette branche est inactive.
+      if (Date.now() - lastTouchAtRef.current < 500) return;
       navigate(`/character/${node}`);
     });
+
 
     renderer.on('enterNode', ({ node }) => {
       hoveredRef.current = node;
@@ -430,8 +443,17 @@ export function SigmaGraph({
         e.preventDefault();
         e.stopPropagation();
         beginDragOn(node);
+      } else if (hoveredRef.current) {
+        // Tap sur le fond avec un highlight actif → on désactive.
+        // Pas de preventDefault ici : on laisse Sigma faire son pan caméra
+        // si l'utilisateur enchaîne sur un drag du fond.
+        hoveredRef.current = null;
+        lastTapNodeRef.current = null;
+        lastTapTimeRef.current = 0;
+        renderer.refresh();
       }
     };
+
 
     const onTouchMoveNative = (e: TouchEvent) => {
       if (!draggedNodeRef.current) return;
@@ -460,12 +482,17 @@ export function SigmaGraph({
     const DOUBLE_TAP_MS = 350;
 
     const onTouchEndNative = (e: TouchEvent) => {
+      // Marquage timestamp AVANT tout — sert au filtrage du `clickNode`
+      // synthétique (ghost click) émis par Sigma juste après ce touchend.
+      lastTouchAtRef.current = Date.now();
+
       const wasDragging = isDraggingRef.current;
       const id = draggedNodeRef.current;
       stopDrag();
 
       // Drag réel ou doigt levé hors d'un nœud → on ne fait rien
       if (!id || wasDragging) return;
+
 
       e.preventDefault();
       const now = Date.now();
