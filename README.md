@@ -62,7 +62,7 @@ The dev server starts at <http://localhost:5173>.
 
 - [x] French to English
 - [x] Mobile layout improvements
-- [ ] Supabase sync for real-time collaboration - Need some testing
+- [x] Supabase sync for real-time collaboration 
 - [ ] Improving graph view
 - [ ] Timeline view for campaign events - Thinking about it
 
