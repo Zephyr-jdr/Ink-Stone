@@ -358,17 +358,56 @@ export function SigmaGraph({
         isDraggingRef.current = false;
       }, 50);
     };
-    mouseCaptor.on('mouseup', stopDrag);
+     mouseCaptor.on('mouseup', stopDrag);
     
     window.addEventListener('mouseup', stopDrag);
 
+    // -------------------------------------------------------------------
+    // Support tactile — Sigma v3 a un TouchCaptor distinct du MouseCaptor.
+    // Sans ces handlers, le drag ne fonctionne pas au doigt sur mobile :
+    // `downNode` fire bien (Sigma le routes via les deux capteurs), mais
+    // `mousemovebody`/`mouseup` ne sortent JAMAIS du MouseCaptor en touch.
+    // -------------------------------------------------------------------
+    const touchCaptor = renderer.getTouchCaptor();
+
+    // Type local : le payload `touchmoves` expose la liste des doigts en
+    // coords viewport. On ne typecase pas via les types officiels Sigma
+    // pour éviter les régressions de typage entre versions mineures.
+    const onTouchMove = (e: { touches: Array<{ x: number; y: number }> }) => {
+      if (!draggedNodeRef.current) return;
+      // Si l'utilisateur passe à 2 doigts (pinch-zoom), on n'interprète
+      // plus le mouvement comme un drag — Sigma garde la main sur le pinch.
+      if (e.touches.length !== 1) return;
+      isDraggingRef.current = true;
+      const { x, y } = e.touches[0];
+      const pos = renderer.viewportToGraph({ x, y });
+      const sn = simNodesRef.current.get(draggedNodeRef.current);
+      if (sn) {
+        sn.fx = pos.x;
+        sn.fy = pos.y;
+      }
+    };
+    // NB: nom d'event = `touchmovebody` (cohérent avec `mousemovebody`).
+    // L'event `touchmove` brut, lui, est filtré par Sigma quand le geste
+    // débute hors d'un nœud : on prend le `body` qui fire dans tous les cas.
+    touchCaptor.on('touchmovebody', onTouchMove);
+
+    touchCaptor.on('touchup', stopDrag);
+    // Filets de sécurité au cas où l'event remonte hors du canvas
+    // (geste qui sort de la zone, bascule d'app, etc.)
+    window.addEventListener('touchend', stopDrag);
+    window.addEventListener('touchcancel', stopDrag);
+
     return () => {
       window.removeEventListener('mouseup', stopDrag);
+      window.removeEventListener('touchend', stopDrag);
+      window.removeEventListener('touchcancel', stopDrag);
       sim.stop();
       simRef.current = null;
       renderer.kill();
       sigmaRef.current = null;
     };
+
   }, [
     characters,
     relations,
@@ -443,7 +482,11 @@ export function SigmaGraph({
     <div
       ref={containerRef}
       className="w-full h-full relative"
-      style={{ cursor: 'default' }}
+      // `touchAction: 'none'` empêche le browser d'intercepter les gestes
+      // tactiles (scroll vertical, pinch-zoom natif) — Sigma gère son
+      // propre pinch-zoom et le drag de nœuds via le TouchCaptor.
+      style={{ cursor: 'default', touchAction: 'none' }}
     />
   );
+
 }
