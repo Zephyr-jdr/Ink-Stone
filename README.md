@@ -42,8 +42,7 @@ TipTap · Sigma.js + graphology · Zustand · React Router 7 ·
 
 ```bash
 cd app
-npm install
-cp .env.example .env.local      # then fill the two values (see step 2)
+npm install     
 npm run dev
 ```
 
