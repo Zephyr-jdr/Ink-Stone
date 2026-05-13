@@ -30,16 +30,33 @@ Your group joins a shared space with an invite code and password. Everyone can c
 - **Graph view** (Sigma.js) — nodes colored by location, edges by relationship type, PC nodes larger than NPCs. Hover to highlight connections, click to open the sheet
 - **Customizable locations** —  filter the grimoire by location
 
+## Stack
+
+React 19 · TypeScript · Vite 7 · Tailwind 3 · shadcn/ui · Framer Motion ·
+TipTap · Sigma.js + graphology · Zustand · React Router 7 ·
+**Supabase** (Postgres + Realtime).
+
+---
+
+## 1. Local development
+
+```bash
+cd app
+npm install
+cp .env.example .env.local      # then fill the two values (see step 2)
+npm run dev
+```
+
+The dev server starts at <http://localhost:5173>.
+
+> Without `.env.local`, the app falls back to **localStorage** (handy for
+> offline work). No demo data is seeded — you start with an empty grimoire
+> and create one via the home page.
+
 ## [Official Website](https://inkandstone.space/)
 
 [![MINI TUTORIAL](screenshots/youtube.jpg)](https://www.youtube.com/watch?v=I6ND4R85OGk)
 
----
-
-## Run Locally 
-
-- Download the app
-- On your console --npm install --npm run dev
 
 ## Roadmap
 
