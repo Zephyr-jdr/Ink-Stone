@@ -36,10 +36,10 @@ Your group joins a shared space with an invite code and password. Everyone can c
 
 ---
 
-##Run Locally 
+## Run Locally 
 
-> Download the app
-> On your console --npm install --npm run dev
+- Download the app
+- On your console --npm install --npm run dev
 
 ## Roadmap
 
