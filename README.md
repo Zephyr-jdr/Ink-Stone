@@ -53,7 +53,7 @@ The dev server starts at <http://localhost:5173>.
 > and create one via the home page.
 
 ## [Official Website](https://inkandstone.space/)
-````Demo log in oj-nhk password 1237```
+```Demo log in oj-nhk password 1237```
 
 [![MINI TUTORIAL](screenshots/youtube.jpg)](https://www.youtube.com/watch?v=I6ND4R85OGk)
 'click on the image'
