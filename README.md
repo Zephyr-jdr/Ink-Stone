@@ -36,6 +36,11 @@ Your group joins a shared space with an invite code and password. Everyone can c
 
 ---
 
+##Run Locally 
+
+> Download the app
+> On your console --npm install --npm run dev
+
 ## Roadmap
 
 - [x] French to English
@@ -43,8 +48,6 @@ Your group joins a shared space with an invite code and password. Everyone can c
 - [ ] Supabase sync for real-time collaboration - Need some testing
 - [ ] Improving graph view
 - [ ] Timeline view for campaign events - Thinking about it
-
-
 
 
 [![Ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/zephyrjdr)
