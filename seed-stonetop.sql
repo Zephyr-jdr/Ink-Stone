@@ -40,9 +40,9 @@ BEGIN
   -- ---------------------------------------------------------------
   -- 0. Récupérer le space cible
   -- ---------------------------------------------------------------
-  SELECT id INTO v_space_id FROM spaces WHERE invite_code = 'sc-pwf';
+  SELECT id INTO v_space_id FROM spaces WHERE invite_code = 'oj-nhk';
   IF v_space_id IS NULL THEN
-    RAISE EXCEPTION 'Grimoire avec invite_code "sc-pwf" introuvable.';
+    RAISE EXCEPTION 'Grimoire avec invite_code "oj-nhk" introuvable.';
   END IF;
   RAISE NOTICE 'Space: %', v_space_id;
 

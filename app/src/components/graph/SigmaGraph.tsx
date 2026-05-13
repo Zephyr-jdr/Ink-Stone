@@ -74,6 +74,12 @@ export function SigmaGraph({
   const adjacencyRef = useRef<Map<string, Set<string>>>(new Map());
   const draggedNodeRef = useRef<string | null>(null);
   const isDraggingRef = useRef(false);
+  // Double-tap pour ouvrir la fiche sur mobile (le hover n'existe pas en
+  // tactile). 1er tap : highlight des liens directs. 2e tap dans le même
+  // nœud sous DOUBLE_TAP_MS : navigation. Tap ailleurs : highlight transféré.
+  const lastTapNodeRef = useRef<string | null>(null);
+  const lastTapTimeRef = useRef<number>(0);
+
 
 
   const forcesRef = useRef<ForceSettings>(forces);
@@ -444,16 +450,45 @@ export function SigmaGraph({
       isDraggingRef.current = true;
     };
 
+    // -------------------------------------------------------------------
+    // Pattern double-tap mobile (équivalent du hover desktop) :
+    //  - 1er tap sur un nœud → highlight des liens directs (comme hover)
+    //  - 2e tap sur le MÊME nœud sous DOUBLE_TAP_MS → ouvre la fiche
+    //  - tap sur un AUTRE nœud → transfert du highlight (= 1er tap)
+    //  - tap sur le fond / drag → pas un tap, ne déclenche rien
+    // -------------------------------------------------------------------
+    const DOUBLE_TAP_MS = 350;
+
     const onTouchEndNative = (e: TouchEvent) => {
       const wasDragging = isDraggingRef.current;
       const id = draggedNodeRef.current;
       stopDrag();
-    
-      if (id && !wasDragging) {
-        e.preventDefault();
+
+      // Drag réel ou doigt levé hors d'un nœud → on ne fait rien
+      if (!id || wasDragging) return;
+
+      e.preventDefault();
+      const now = Date.now();
+      const isDoubleTap =
+        lastTapNodeRef.current === id &&
+        now - lastTapTimeRef.current < DOUBLE_TAP_MS;
+
+      if (isDoubleTap) {
+        // 2e tap → ouvre la fiche, on reset l'état tap
+        lastTapNodeRef.current = null;
+        lastTapTimeRef.current = 0;
         navigate(`/character/${id}`);
+      } else {
+        // 1er tap (ou nouveau nœud) → highlight des liens directs.
+        // On utilise la même variable `hoveredRef` que enterNode/leaveNode
+        // côté desktop, donc le nodeReducer/edgeReducer fait déjà le rendu.
+        hoveredRef.current = id;
+        renderer.refresh();
+        lastTapNodeRef.current = id;
+        lastTapTimeRef.current = now;
       }
     };
+
 
     
     const opts = { passive: false, capture: true } as AddEventListenerOptions;
