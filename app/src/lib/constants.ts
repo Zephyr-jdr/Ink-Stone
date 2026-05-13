@@ -27,11 +27,6 @@ export const FONTS = {
   body: "'Inter', system-ui, -apple-system, sans-serif",
 } as const;
 
-/* ------------------------------------------------------------------
- * Types de relations — liste fermée, avec couleur dédiée pour le graph.
- * Le `id` est ce qui est stocké dans `Relation.relation_type`.
- * Le `label` est ce que le MJ voit dans les dropdowns.
- * ------------------------------------------------------------------ */
 
 export interface RelationType {
   id: string;
@@ -90,18 +85,6 @@ export function migrateRelationType(legacy: string | undefined): string {
 
 export const APP_NAME = 'Ink & Stone';
 
-/* ------------------------------------------------------------------
- * Lieux du Playbook Stonetop — uniquement pour le seed du demo-space.
- * Plus de listes de noms ni de traits suggérés : la saisie est libre.
- * ------------------------------------------------------------------ */
-
-/**
- * Lieux du Playbook Stonetop. Sert de référence pour la migration
- * (ancien `Character.location` en clair → id Location créé) et pour
- * le seed du demo-space avec des couleurs cohérentes.
- *
- * Ces couleurs sont saturées mais sourdes (palette pigments naturels).
- */
 export const STONETOP_PLAYBOOK_LOCATIONS: { name: string; color: string }[] = [
   { name: 'Stonetop',       color: '#7AA177' }, // vert mousse
   { name: 'Marshedge',      color: '#7DA1B0' }, // bleu marais
