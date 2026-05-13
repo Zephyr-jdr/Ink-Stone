@@ -307,25 +307,35 @@ export function SigmaGraph({
       if (containerRef.current) containerRef.current.style.cursor = 'default';
     });
 
-   
-    renderer.on('downNode', ({ node, event }) => {
+    // Référence stable à la caméra : on toggle `enabledPanning` pour empêcher
+    // le pan natif (souris + touch) pendant qu'on drag un nœud. C'est la
+    // seule façon propre de bloquer le pan du TouchCaptor — `preventSigmaDefault`
+    // ne s'applique qu'au MouseCaptor.
+    const camera = renderer.getCamera();
+
+    // Helper commun : initialise le drag sur un nœud donné.
+    const beginDragOn = (node: string) => {
       draggedNodeRef.current = node;
-      isDraggingRef.current = false; // deviendra true au premier mousemove
+      isDraggingRef.current = false;
       const sn = simNodesRef.current.get(node);
       if (sn) {
         sn.fx = sn.x;
         sn.fy = sn.y;
       }
-      
+      camera.enabledPanning = false;          // ← bloque le pan caméra
       const s = simRef.current;
       if (s && !forcesRef.current.frozen) {
         s.alphaTarget(0.3).restart();
       }
-      
+    };
+
+    renderer.on('downNode', ({ node, event }) => {
+      beginDragOn(node);
       event.preventSigmaDefault();
       event.original.preventDefault();
       event.original.stopPropagation();
     });
+
 
      const mouseCaptor = renderer.getMouseCaptor();
 
@@ -344,6 +354,9 @@ export function SigmaGraph({
 
     const stopDrag = () => {
       const id = draggedNodeRef.current;
+      // On ré-active TOUJOURS le pan, même si on n'avait pas de drag actif —
+      // évite que la caméra reste figée si une exception interrompt le flow.
+      camera.enabledPanning = true;
       if (!id) return;
       const sn = simNodesRef.current.get(id);
       if (sn) {
@@ -351,13 +364,14 @@ export function SigmaGraph({
         sn.fy = null;
       }
       const s = simRef.current;
-      if (s) s.alphaTarget(0); 
+      if (s) s.alphaTarget(0);
       draggedNodeRef.current = null;
-     
+
       setTimeout(() => {
         isDraggingRef.current = false;
       }, 50);
     };
+
      mouseCaptor.on('mouseup', stopDrag);
     
     window.addEventListener('mouseup', stopDrag);
@@ -392,7 +406,48 @@ export function SigmaGraph({
     // débute hors d'un nœud : on prend le `body` qui fire dans tous les cas.
     touchCaptor.on('touchmovebody', onTouchMove);
 
+    // -------------------------------------------------------------------
+    // Hit-test manuel sur `touchdown` — IMPORTANT.
+    // En pratique, sur Sigma v3, l'event `downNode` ne fire PAS en touch :
+    // le pipeline de hit-detection des nœuds est branché sur le MouseCaptor.
+    // Conséquence : sans ce handler, `draggedNodeRef` reste null et le pan
+    // caméra continue. On fait donc nous-mêmes le test de proximité.
+    // -------------------------------------------------------------------
+    touchCaptor.on('touchdown', (e: { touches: Array<{ x: number; y: number }> }) => {
+      if (e.touches.length !== 1) return; // pinch → pas de drag
+      const { x, y } = e.touches[0];
+      const graphPos = renderer.viewportToGraph({ x, y });
+
+      // Rayon de tolérance en unités graph. On le fait dépendre du zoom
+      // courant : `cameraRatio` augmente quand on dézoom, donc le seuil
+      // doit s'adapter pour que le doigt (qui fait ~30-40 px) reste dans
+      // la "zone" du nœud quel que soit le niveau de zoom.
+      const ratio = camera.getState().ratio;
+      // 25 unités graph à zoom 1, scaled par ratio. Bornes pour éviter
+      // les extrêmes (zoom très in / très out).
+      const HIT_RADIUS = Math.max(15, Math.min(80, 25 * ratio));
+      const hr2 = HIT_RADIUS * HIT_RADIUS;
+
+      let nearest: string | null = null;
+      let minD2 = hr2;
+      simNodesRef.current.forEach((sn, id) => {
+        if (sn.x === undefined || sn.y === undefined) return;
+        const dx = sn.x - graphPos.x;
+        const dy = sn.y - graphPos.y;
+        const d2 = dx * dx + dy * dy;
+        if (d2 < minD2) {
+          minD2 = d2;
+          nearest = id;
+        }
+      });
+
+      if (nearest) {
+        beginDragOn(nearest);
+      }
+    });
+
     touchCaptor.on('touchup', stopDrag);
+
     // Filets de sécurité au cas où l'event remonte hors du canvas
     // (geste qui sort de la zone, bascule d'app, etc.)
     window.addEventListener('touchend', stopDrag);
