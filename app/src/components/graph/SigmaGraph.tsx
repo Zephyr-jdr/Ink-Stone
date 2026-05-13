@@ -84,6 +84,13 @@ export function SigmaGraph({
   // navigation au 1er tap, court-circuitant le pattern double-tap.
   // On filtre `clickNode` dans la fenêtre [touchend ; touchend + 500ms].
   const lastTouchAtRef = useRef<number>(0);
+  // Position de départ du geste (touch ou mouse) — sert au seuil de
+  // mouvement qui distingue un TAP d'un DRAG. Sans ce seuil, le micro-
+  // mouvement involontaire du doigt entre touchstart et touchend
+  // (toujours 2-3 px en pratique) flagge à tort `isDraggingRef = true`
+  // et casse la détection de double-tap.
+  const dragStartRef = useRef<{ x: number; y: number } | null>(null);
+
 
 
 
@@ -345,8 +352,16 @@ export function SigmaGraph({
       }
     };
 
+    // Seuil en pixels viewport pour distinguer un TAP d'un DRAG. En dessous,
+    // on n'active PAS isDraggingRef et on ne déplace PAS le nœud — c'est
+    // un tap (ou un long-press immobile). Au-dessus, c'est un drag.
+    const DRAG_THRESHOLD_PX = 10;
+
     renderer.on('downNode', ({ node, event }) => {
       beginDragOn(node);
+      // Mémorise la position de départ pour appliquer le seuil au prochain
+      // mousemovebody (pareil que pour le touch).
+      dragStartRef.current = { x: event.x, y: event.y };
       event.preventSigmaDefault();
       event.original.preventDefault();
       event.original.stopPropagation();
@@ -357,6 +372,16 @@ export function SigmaGraph({
 
     const onMouseMove = (e: { x: number; y: number; preventSigmaDefault: () => void }) => {
       if (!draggedNodeRef.current) return;
+      const start = dragStartRef.current;
+      if (start) {
+        const dx = e.x - start.x;
+        const dy = e.y - start.y;
+        // Sous le seuil → on ignore (c'est un click immobile, pas un drag)
+        if (Math.hypot(dx, dy) < DRAG_THRESHOLD_PX) {
+          e.preventSigmaDefault();
+          return;
+        }
+      }
       isDraggingRef.current = true;
       const pos = renderer.viewportToGraph({ x: e.x, y: e.y });
       const sn = simNodesRef.current.get(draggedNodeRef.current);
@@ -367,6 +392,7 @@ export function SigmaGraph({
       e.preventSigmaDefault();
     };
     mouseCaptor.on('mousemovebody', onMouseMove);
+
 
     const stopDrag = () => {
       const id = draggedNodeRef.current;
@@ -443,7 +469,10 @@ export function SigmaGraph({
         e.preventDefault();
         e.stopPropagation();
         beginDragOn(node);
+        // Mémorise la position de départ pour le seuil DRAG_THRESHOLD_PX.
+        dragStartRef.current = { x, y };
       } else if (hoveredRef.current) {
+
         // Tap sur le fond avec un highlight actif → on désactive.
         // Pas de preventDefault ici : on laisse Sigma faire son pan caméra
         // si l'utilisateur enchaîne sur un drag du fond.
@@ -463,6 +492,18 @@ export function SigmaGraph({
       e.preventDefault();
       e.stopPropagation();
       const { x, y } = getTouchPoint(e.touches[0]);
+
+      // Seuil de mouvement : on ne considère que c'est un drag qu'au-delà
+      // de DRAG_THRESHOLD_PX. Sous ce seuil, c'est du micro-mouvement
+      // involontaire du doigt — le nœud reste en place et `isDraggingRef`
+      // reste à `false` pour que le `touchend` le traite comme un tap.
+      const start = dragStartRef.current;
+      if (start) {
+        const dx = x - start.x;
+        const dy = y - start.y;
+        if (Math.hypot(dx, dy) < DRAG_THRESHOLD_PX) return;
+      }
+
       const pos = renderer.viewportToGraph({ x, y });
       const sn = simNodesRef.current.get(draggedNodeRef.current);
       if (sn) {
@@ -471,6 +512,7 @@ export function SigmaGraph({
       }
       isDraggingRef.current = true;
     };
+
 
     // -------------------------------------------------------------------
     // Pattern double-tap mobile (équivalent du hover desktop) :

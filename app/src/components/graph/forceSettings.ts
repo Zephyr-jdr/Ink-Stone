@@ -12,34 +12,37 @@
  *  - `linkDistance`  → `forceLink.distance(linkDistance)`
  *                      Longueur cible des arêtes (en unités graph).
  *
- * Bornes choisies pour rester dans une zone sensible et reproduire le
- * feel d'Obsidian sur un graphe ~10–50 nœuds.
+ * Bornes calibrées pour des graphes de 30–60 nœuds : on privilégie un
+ * layout aéré (forte répulsion + grandes distances) quitte à ce que le
+ * graphe sorte du viewport — l'utilisateur peut zoomer/dézoomer.
  */
 export interface ForceSettings {
   /** Force de centre. 0..1. Plus haut = nœuds plus serrés au centre. */
   centerForce: number;
-  /** Force de répulsion (charge). 50..1000. Plus haut = nœuds plus écartés. */
+  /** Force de répulsion (charge). 50..3000. Plus haut = nœuds plus écartés. */
   repelForce: number;
   /** Force de liaison (rigidité). 0..1. Plus haut = arêtes plus tendues. */
   linkForce: number;
-  /** Distance cible des liens. 10..300. */
+  /** Distance cible des liens. 10..600. */
   linkDistance: number;
   /** simulation gelée (alpha = 0 forcé). */
   frozen: boolean;
 }
 
+// Valeurs par défaut élargies pour 40+ nœuds : forte répulsion, grandes
+// distances, ressorts plus souples → graphe lisible sans chevauchements.
 export const DEFAULT_FORCE_SETTINGS: ForceSettings = {
-  centerForce: 0.1,
-  repelForce: 250,
-  linkForce: 0.6,
-  linkDistance: 80,
+  centerForce: 0.05,    // (était 0.1) moins de compression vers le centre
+  repelForce: 800,      // (était 250) répulsion ×3 pour aérer
+  linkForce: 0.4,       // (était 0.6) ressorts moins rigides
+  linkDistance: 200,    // (était 80) liens 2.5× plus longs
   frozen: false,
 };
 
 /** Bornes des sliders, exposées pour la sidebar. */
 export const FORCE_BOUNDS = {
   centerForce:  { min: 0,   max: 1,    step: 0.01 },
-  repelForce:   { min: 50,  max: 1000, step: 10   },
+  repelForce:   { min: 50,  max: 3000, step: 50   },  // (max était 1000)
   linkForce:    { min: 0,   max: 1,    step: 0.05 },
-  linkDistance: { min: 10,  max: 300,  step: 5    },
+  linkDistance: { min: 10,  max: 600,  step: 10   },  // (max était 300)
 } as const;
