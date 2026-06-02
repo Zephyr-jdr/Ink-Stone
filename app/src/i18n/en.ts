@@ -96,7 +96,8 @@ export type Dict = {
     | 'typePC' | 'typeNPC'
     | 'centerForce' | 'repelForce' | 'linkForce' | 'linkDistance'
     | 'freeze' | 'resume' | 'reorganize'
-    | 'legendNode' | 'legendText',
+    | 'legendNode' | 'legendText'
+    | 'panelRelations' | 'panelNoRelations' | 'panelClose' | 'panelTapHint',
     string
   >;
   relation: Record<
@@ -361,6 +362,10 @@ export const en: Dict = {
     freeze: 'Freeze',
     resume: 'Resume',
     reorganize: 'Reorganize',
+    panelRelations: 'Bonds',
+    panelNoRelations: 'No visible bond.',
+    panelClose: 'Close',
+    panelTapHint: 'Tap a name to open the sheet',
     legendNode: 'Node = location',
     legendText:
       'Node colour reflects the character\'s location. Edges take the colour of the relation type. PCs are slightly larger with a gold ring. Drag a node to move it — the simulation will settle on its own.',

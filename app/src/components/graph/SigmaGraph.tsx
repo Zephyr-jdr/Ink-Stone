@@ -37,6 +37,17 @@ interface SigmaGraphProps {
   visibleRelationTypes?: Set<string>;
   forces: ForceSettings;
   reseedToken?: number;
+  /**
+   * Nœud actuellement sélectionné (contrôlé par le parent). Sert à piloter
+   * la surbrillance depuis l'extérieur — par ex. quand on ferme le panneau
+   * mobile (`null`) ou qu'on resélectionne un nœud. `undefined` = non piloté.
+   */
+  selectedNodeId?: string | null;
+  /**
+   * Appelé quand l'utilisateur tape un nœud (mobile) → le parent ouvre le
+   * panneau des liens. `null` quand on tape le fond pour désélectionner.
+   */
+  onSelectNode?: (id: string | null) => void;
 }
 
 
@@ -61,6 +72,8 @@ export function SigmaGraph({
   visibleRelationTypes,
   forces,
   reseedToken = 0,
+  selectedNodeId,
+  onSelectNode,
 }: SigmaGraphProps) {
   const t = useT();
   const navigate = useNavigate();
@@ -74,14 +87,15 @@ export function SigmaGraph({
   const adjacencyRef = useRef<Map<string, Set<string>>>(new Map());
   const draggedNodeRef = useRef<string | null>(null);
   const isDraggingRef = useRef(false);
-  // Double-tap pour ouvrir la fiche sur mobile (le hover n'existe pas en
-  // tactile). 1er tap : highlight des liens directs. 2e tap dans le même
-  // nœud sous DOUBLE_TAP_MS : navigation. Tap ailleurs : highlight transféré.
-  const lastTapNodeRef = useRef<string | null>(null);
-  const lastTapTimeRef = useRef<number>(0);
+  // Mobile : un simple tap sur un nœud le sélectionne (= surbrillance des
+  // liens directs + ouverture du panneau côté parent). Plus de double-tap.
+  // Refs miroir des props pour les lire dans les handlers natifs sans
+  // re-exécuter le gros useEffect de construction du graphe.
+  const onSelectNodeRef = useRef(onSelectNode);
+  const selectedNodeIdRef = useRef<string | null | undefined>(selectedNodeId);
   // Timestamp du dernier event tactile. Sigma émet un `clickNode`
-  // synthétique après chaque tap (ghost click) qui déclencherait la
-  // navigation au 1er tap, court-circuitant le pattern double-tap.
+  // synthétique après chaque tap (ghost click) ; sur mobile on l'ignore
+  // pour ne PAS naviguer au tap (la navigation passe par le panneau).
   // On filtre `clickNode` dans la fenêtre [touchend ; touchend + 500ms].
   const lastTouchAtRef = useRef<number>(0);
   // Position de départ du geste (touch ou mouse) — sert au seuil de
@@ -99,6 +113,20 @@ export function SigmaGraph({
   useEffect(() => {
     forcesRef.current = forces;
   }, [forces]);
+
+  useEffect(() => {
+    onSelectNodeRef.current = onSelectNode;
+  }, [onSelectNode]);
+
+  // Sélection pilotée par le parent → synchronise la surbrillance interne.
+  // Quand le panneau se ferme (selectedNodeId = null) on efface le highlight.
+  // `undefined` = mode non piloté (desktop), on n'y touche pas.
+  useEffect(() => {
+    if (selectedNodeId === undefined) return;
+    selectedNodeIdRef.current = selectedNodeId;
+    hoveredRef.current = selectedNodeId;
+    sigmaRef.current?.refresh();
+  }, [selectedNodeId]);
 
 
   useEffect(() => {
@@ -473,13 +501,13 @@ export function SigmaGraph({
         dragStartRef.current = { x, y };
       } else if (hoveredRef.current) {
 
-        // Tap sur le fond avec un highlight actif → on désactive.
+        // Tap sur le fond avec une sélection active → on désélectionne
+        // (efface la surbrillance + ferme le panneau côté parent).
         // Pas de preventDefault ici : on laisse Sigma faire son pan caméra
         // si l'utilisateur enchaîne sur un drag du fond.
         hoveredRef.current = null;
-        lastTapNodeRef.current = null;
-        lastTapTimeRef.current = 0;
         renderer.refresh();
+        onSelectNodeRef.current?.(null);
       }
     };
 
@@ -515,17 +543,17 @@ export function SigmaGraph({
 
 
     // -------------------------------------------------------------------
-    // Pattern double-tap mobile (équivalent du hover desktop) :
-    //  - 1er tap sur un nœud → highlight des liens directs (comme hover)
-    //  - 2e tap sur le MÊME nœud sous DOUBLE_TAP_MS → ouvre la fiche
-    //  - tap sur un AUTRE nœud → transfert du highlight (= 1er tap)
-    //  - tap sur le fond / drag → pas un tap, ne déclenche rien
+    // Tap mobile = sélection (équivalent du hover desktop) :
+    //  - tap sur un nœud → highlight des liens directs + ouverture du
+    //    panneau (le parent affiche la liste des liens, cliquables pour
+    //    ouvrir la fiche du PNJ). Plus de double-tap.
+    //  - tap sur le fond → désélection (géré dans onTouchStartNative).
+    //  - drag → pas un tap, ne déclenche rien.
     // -------------------------------------------------------------------
-    const DOUBLE_TAP_MS = 350;
-
     const onTouchEndNative = (e: TouchEvent) => {
       // Marquage timestamp AVANT tout — sert au filtrage du `clickNode`
-      // synthétique (ghost click) émis par Sigma juste après ce touchend.
+      // synthétique (ghost click) émis par Sigma juste après ce touchend,
+      // pour éviter une navigation parasite au tap.
       lastTouchAtRef.current = Date.now();
 
       const wasDragging = isDraggingRef.current;
@@ -535,27 +563,13 @@ export function SigmaGraph({
       // Drag réel ou doigt levé hors d'un nœud → on ne fait rien
       if (!id || wasDragging) return;
 
-
       e.preventDefault();
-      const now = Date.now();
-      const isDoubleTap =
-        lastTapNodeRef.current === id &&
-        now - lastTapTimeRef.current < DOUBLE_TAP_MS;
-
-      if (isDoubleTap) {
-        // 2e tap → ouvre la fiche, on reset l'état tap
-        lastTapNodeRef.current = null;
-        lastTapTimeRef.current = 0;
-        navigate(`/character/${id}`);
-      } else {
-        // 1er tap (ou nouveau nœud) → highlight des liens directs.
-        // On utilise la même variable `hoveredRef` que enterNode/leaveNode
-        // côté desktop, donc le nodeReducer/edgeReducer fait déjà le rendu.
-        hoveredRef.current = id;
-        renderer.refresh();
-        lastTapNodeRef.current = id;
-        lastTapTimeRef.current = now;
-      }
+      // Tap sur un nœud → surbrillance (même variable `hoveredRef` que le
+      // hover desktop, donc node/edgeReducer rendent déjà) + sélection.
+      hoveredRef.current = id;
+      selectedNodeIdRef.current = id;
+      renderer.refresh();
+      onSelectNodeRef.current?.(id);
     };
 
 

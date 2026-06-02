@@ -253,6 +253,10 @@ export const fr: Dict = {
     freeze: 'Geler',
     resume: 'Reprendre',
     reorganize: 'Réorga.',
+    panelRelations: 'Liens',
+    panelNoRelations: 'Aucun lien visible.',
+    panelClose: 'Fermer',
+    panelTapHint: 'Touchez un nom pour ouvrir la fiche',
     legendNode: 'Nœud = lieu',
     legendText:
       'La couleur des nœuds reflète le lieu du personnage. Les arêtes adoptent la couleur du type de relation. Les PJ sont plus gros et entourés d\'un liseré doré. Glissez un nœud pour le déplacer — la simulation se calmera d\'elle-même.',

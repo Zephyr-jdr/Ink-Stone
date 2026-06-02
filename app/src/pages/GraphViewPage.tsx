@@ -6,6 +6,7 @@ import { Header } from '@/components/layout/Header';
 import { SigmaGraph } from '@/components/graph/SigmaGraph';
 import { DEFAULT_FORCE_SETTINGS, type ForceSettings } from '@/components/graph/forceSettings';
 import { GraphFiltersSidebar } from '@/components/graph/GraphFiltersSidebar';
+import { GraphNodePanel } from '@/components/graph/GraphNodePanel';
 import { ErrorBoundary } from '@/components/shared/ErrorBoundary';
 import { useAppStore } from '@/stores/appStore';
 import { useCharacters } from '@/hooks/useCharacters';
@@ -68,6 +69,9 @@ export default function GraphViewPage() {
   const [forces, setForces] = useState<ForceSettings>(DEFAULT_FORCE_SETTINGS);
   const [reseedToken, setReseedToken] = useState(0);
 
+  // Nœud sélectionné au tap (mobile) → ouvre le panneau des liens.
+  const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
+
   
   const visibleCharacterIds = useMemo(() => {
     const q = search.toLowerCase().trim();
@@ -122,6 +126,20 @@ export default function GraphViewPage() {
       return next;
     });
   };
+
+  // Personnage sélectionné (pour le panneau mobile). On désélectionne si le
+  // nœud n'est plus visible (filtre) ou si on repasse en desktop.
+  const selectedCharacter = useMemo(
+    () =>
+      selectedNodeId ? characters.find((c) => c.id === selectedNodeId) ?? null : null,
+    [selectedNodeId, characters]
+  );
+
+  useEffect(() => {
+    if (selectedNodeId && (isDesktop || !visibleCharacterIds.has(selectedNodeId))) {
+      setSelectedNodeId(null);
+    }
+  }, [selectedNodeId, isDesktop, visibleCharacterIds]);
 
   if (!session) return null;
 
@@ -245,8 +263,27 @@ export default function GraphViewPage() {
                 visibleRelationTypes={visibleRelationTypeIds}
                 forces={forces}
                 reseedToken={reseedToken}
+                selectedNodeId={isDesktop ? undefined : selectedNodeId}
+                onSelectNode={isDesktop ? undefined : setSelectedNodeId}
               />
             </ErrorBoundary>
+
+            {/* Panneau des liens au tap d'un nœud — mobile uniquement */}
+            <AnimatePresence>
+              {!isDesktop && selectedCharacter && (
+                <GraphNodePanel
+                  key={selectedCharacter.id}
+                  character={selectedCharacter}
+                  characters={characters}
+                  relations={relations}
+                  locations={locations}
+                  visibleCharacterIds={visibleCharacterIds}
+                  visibleRelationTypeIds={visibleRelationTypeIds}
+                  onClose={() => setSelectedNodeId(null)}
+                  onOpenCharacter={(id) => navigate(`/character/${id}`)}
+                />
+              )}
+            </AnimatePresence>
           </div>
 
           {/* Drawer mobile (overlay) */}
