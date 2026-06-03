@@ -77,9 +77,13 @@ export function LocationPicker({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -4 }}
             transition={{ duration: 0.12 }}
-            className="absolute z-30 left-0 right-0 mt-1 card-paper shadow-lg overflow-hidden"
+            className="absolute z-30 left-0 right-0 mt-1 card-paper shadow-lg"
           >
-            <div className="max-h-64 overflow-y-auto py-1">
+            {/* La liste garde son propre clipping (coins arrondis + scroll),
+                mais le conteneur n'a PLUS `overflow-hidden` : sinon la palette
+                de couleurs du formulaire « créer un lieu » (popover absolu en
+                pied de dropdown) serait coupée faute de hauteur. */}
+            <div className="max-h-64 overflow-y-auto py-1 rounded-t-xl">
               {/* Option "Sans lieu" */}
               <PickerOption
                 color={FALLBACK_LOCATION_COLOR}

@@ -93,11 +93,6 @@ export function SigmaGraph({
   // re-exécuter le gros useEffect de construction du graphe.
   const onSelectNodeRef = useRef(onSelectNode);
   const selectedNodeIdRef = useRef<string | null | undefined>(selectedNodeId);
-  // Timestamp du dernier event tactile. Sigma émet un `clickNode`
-  // synthétique après chaque tap (ghost click) ; sur mobile on l'ignore
-  // pour ne PAS naviguer au tap (la navigation passe par le panneau).
-  // On filtre `clickNode` dans la fenêtre [touchend ; touchend + 500ms].
-  const lastTouchAtRef = useRef<number>(0);
   // Position de départ du geste (touch ou mouse) — sert au seuil de
   // mouvement qui distingue un TAP d'un DRAG. Sans ce seuil, le micro-
   // mouvement involontaire du doigt entre touchstart et touchend
@@ -336,16 +331,26 @@ export function SigmaGraph({
 
    
 
+    // `clickNode` est émis de façon fiable par Sigma sur desktop ET mobile
+    // (sur mobile c'est le « ghost click » synthétique post-touchend). On
+    // l'utilise comme source unique de vérité pour le click/tap sur un nœud,
+    // avec le hit-test natif de Sigma (pixel-perfect) plutôt que notre
+    // hit-test maison qui s'avérait peu fiable au tactile.
+    //   - Mode piloté (mobile, onSelectNode défini) → sélection = ouverture
+    //     du panneau des liens (pas de navigation directe).
+    //   - Sinon (desktop) → navigation vers la fiche.
     renderer.on('clickNode', ({ node }) => {
       // Empêche un click parasite après un drag réel
       if (isDraggingRef.current) return;
-      // Ghost click post-tap : Sigma émet un `clickNode` synthétique
-      // après chaque touchend (≈ 100-300ms plus tard). On l'ignore dans
-      // une fenêtre de 500ms après le dernier event tactile, pour que
-      // la logique double-tap d'`onTouchEndNative` garde la main.
-      // Sur desktop, lastTouchAtRef = 0 → cette branche est inactive.
-      if (Date.now() - lastTouchAtRef.current < 500) return;
-      navigate(`/character/${node}`);
+      const onSelect = onSelectNodeRef.current;
+      if (onSelect) {
+        hoveredRef.current = node;
+        selectedNodeIdRef.current = node;
+        renderer.refresh();
+        onSelect(node);
+      } else {
+        navigate(`/character/${node}`);
+      }
     });
 
 
@@ -551,21 +556,18 @@ export function SigmaGraph({
     //  - drag → pas un tap, ne déclenche rien.
     // -------------------------------------------------------------------
     const onTouchEndNative = (e: TouchEvent) => {
-      // Marquage timestamp AVANT tout — sert au filtrage du `clickNode`
-      // synthétique (ghost click) émis par Sigma juste après ce touchend,
-      // pour éviter une navigation parasite au tap.
-      lastTouchAtRef.current = Date.now();
-
       const wasDragging = isDraggingRef.current;
       const id = draggedNodeRef.current;
       stopDrag();
 
-      // Drag réel ou doigt levé hors d'un nœud → on ne fait rien
+      // Drag réel ou doigt levé hors d'un nœud → on ne fait rien.
+      // La SÉLECTION elle-même est gérée par le handler `clickNode` de Sigma
+      // (hit-test fiable) ; on garde quand même ici une sélection de secours
+      // au cas où le `clickNode` synthétique ne serait pas émis sur certains
+      // navigateurs mobiles.
       if (!id || wasDragging) return;
 
       e.preventDefault();
-      // Tap sur un nœud → surbrillance (même variable `hoveredRef` que le
-      // hover desktop, donc node/edgeReducer rendent déjà) + sélection.
       hoveredRef.current = id;
       selectedNodeIdRef.current = id;
       renderer.refresh();
