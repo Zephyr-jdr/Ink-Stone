@@ -52,6 +52,30 @@ export interface Relation {
   created_at: string;
 }
 
+export type Season = 'spring' | 'summer' | 'autumn' | 'winter';
+
+/** Texte libre pour chaque saison d'une année. */
+export interface TimelineEntry {
+  spring?: string;
+  summer?: string;
+  autumn?: string;
+  winter?: string;
+}
+
+/**
+ * Frise chronologique « Chroniques » — une seule par grimoire (`space`).
+ * Tout le contenu est stocké en un bloc : la plage d'années (`start_year`,
+ * `year_count`) et la map `entries` indexée par année (clé = string).
+ */
+export interface Timeline {
+  id: string;
+  space_id: string;
+  start_year: number;
+  year_count: number;
+  entries: Record<string, TimelineEntry>;
+  updated_at: string;
+}
+
 export interface Space {
   id: string;
   name: string;

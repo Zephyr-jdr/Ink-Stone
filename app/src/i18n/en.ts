@@ -37,7 +37,7 @@ export type Dict = {
     string
   >;
   dashboard: Record<
-    | 'countOne' | 'countOther' | 'inviteCode' | 'addCharacter' | 'graphView'
+    | 'countOne' | 'countOther' | 'inviteCode' | 'addCharacter' | 'graphView' | 'chroniclesView'
     | 'manageLocations' | 'manageLocationsTitle' | 'searchPlaceholder'
     | 'typeAll' | 'typePC' | 'typeNPC'
     | 'locationsLabel' | 'allLocations' | 'noLocation'
@@ -100,10 +100,25 @@ export type Dict = {
     | 'panelRelations' | 'panelNoRelations' | 'panelClose' | 'panelTapHint',
     string
   >;
+  chronicles: Record<
+    | 'overline' | 'title' | 'year' | 'start' | 'reset' | 'resetConfirm'
+    | 'yearBefore' | 'yearAfter' | 'addYearBefore' | 'addYearAfter'
+    | 'scrollHint'
+    | 'spring' | 'summer' | 'autumn' | 'winter'
+    | 'seasonPlaceholder' | 'focus' | 'fullscreen' | 'focusHint' | 'close',
+    string
+  >;
   relation: Record<
     | 'friend' | 'family' | 'mentor' | 'companion' | 'rival' | 'enemy'
     | 'romance' | 'acquaintance' | 'other'
     | 'closeFriend' | 'distrust' | 'swornEnemy' | 'ally',
+    string
+  >;
+  whatsNew: Record<
+    | 'overline' | 'title' | 'intro'
+    | 'chroniclesTitle' | 'chroniclesText'
+    | 'graphTitle' | 'graphText'
+    | 'kofiText' | 'kofiCta' | 'gotIt',
     string
   >;
   errors: Record<'boundaryTitle' | 'boundaryDefault', string>;
@@ -215,6 +230,7 @@ export const en: Dict = {
     inviteCode: 'Login code',
     addCharacter: 'Add character',
     graphView: 'Graph view',
+    chroniclesView: 'Chronicle',
     manageLocations: 'Manage locations',
     manageLocationsTitle: 'Manage the list of locations',
     searchPlaceholder: 'Search by name, role, location, trait, tag…',
@@ -371,6 +387,29 @@ export const en: Dict = {
       'Node colour reflects the character\'s location. Edges take the colour of the relation type. PCs are slightly larger with a gold ring. Drag a node to move it — the simulation will settle on its own.',
   },
 
+  chronicles: {
+    overline: 'Chronicle',
+    title: 'Wheel of seasons',
+    year: 'Year',
+    start: 'Start',
+    reset: 'Reset the start year',
+    resetConfirm: 'Reset the start year?\n\nThe wheel restarts at year 0 with 11 years (the text you entered stays linked to each matching year).',
+    yearBefore: 'Year before',
+    yearAfter: 'Year after',
+    addYearBefore: 'Add a year before',
+    addYearAfter: 'Add a year after',
+    scrollHint: 'Wheel, swipe or arrows · tap a year',
+    spring: 'Spring',
+    summer: 'Summer',
+    autumn: 'Autumn',
+    winter: 'Winter',
+    seasonPlaceholder: 'Write what happened in {season}…',
+    focus: 'Focus',
+    fullscreen: 'Open {season} fullscreen',
+    focusHint: 'Esc to close · your text is saved automatically',
+    close: 'Close',
+  },
+
   relation: {
     friend: 'Friend / Ally',
     family: 'Family',
@@ -387,6 +426,18 @@ export const en: Dict = {
     ally: 'Ally',
   },
 
+  whatsNew: {
+    overline: 'Update',
+    title: 'What\'s new',
+    intro: 'A few fresh additions to your grimoire:',
+    chroniclesTitle: 'Chronicles',
+    chroniclesText: 'A new seasonal wheel — note what happens each spring, summer, autumn and winter, shared with your table.',
+    graphTitle: 'Smoother graph on mobile',
+    graphText: 'Tap a node to highlight its bonds and open a panel you can tap through to each character sheet.',
+    kofiText: 'Ink & Stone is free and ad-free. If it helps your table, a coffee keeps it going.',
+    kofiCta: 'Support on Ko-fi',
+    gotIt: 'Got it',
+  },
   errors: {
     boundaryTitle: 'Something went wrong',
     boundaryDefault: 'The render failed.',

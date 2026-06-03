@@ -33,5 +33,6 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true
   },
-  "include": ["src"]
+  "include": ["src"],
+  "exclude": ["src/components/ui", "src/lib/utils.ts", "src/hooks/use-mobile.ts"]
 }

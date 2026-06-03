@@ -8,7 +8,7 @@
 // All hooks (`useSpace`, `useCharacters`, `useRelations`, `useLocations`)
 // import from this module, never from supabase.ts or mockDb.ts directly.
 // =====================================================================
-import type { Character, Location, Relation, Space } from '@/types';
+import type { Character, Location, Relation, Space, Timeline } from '@/types';
 import {
   getSupabase,
   isSupabaseConfigured,
@@ -164,6 +164,47 @@ async function deleteLocation(id: string): Promise<void> {
 }
 
 // ----------------------------------------------------------------------
+// Timeline (Chroniques) — une frise unique par space, stockée en un bloc.
+// ----------------------------------------------------------------------
+async function getTimeline(spaceId: string): Promise<Timeline | null> {
+  const sb = getSupabase();
+  if (sb) {
+    const { data, error } = await sb
+      .from('timelines')
+      .select('*')
+      .eq('space_id', spaceId)
+      .maybeSingle();
+    if (error) throw error;
+    return (data as Timeline) ?? null;
+  }
+  return localDb.getTimeline(spaceId);
+}
+
+async function saveTimeline(
+  spaceId: string,
+  patch: Pick<Timeline, 'start_year' | 'year_count' | 'entries'>,
+): Promise<Timeline> {
+  const sb = getSupabase();
+  const row = {
+    space_id: spaceId,
+    start_year: patch.start_year,
+    year_count: patch.year_count,
+    entries: patch.entries,
+    updated_at: new Date().toISOString(),
+  };
+  if (sb) {
+    const { data, error } = await sb
+      .from('timelines')
+      .upsert(row, { onConflict: 'space_id' })
+      .select()
+      .single();
+    if (error) throw error;
+    return data as Timeline;
+  }
+  return localDb.saveTimeline(spaceId, row);
+}
+
+// ----------------------------------------------------------------------
 // Characters
 // ----------------------------------------------------------------------
 function normaliseChar(c: Character): Character {
@@ -316,6 +357,11 @@ export function subscribeSpace(spaceId: string, onChange: () => void): () => voi
           { event: '*', schema: 'public', table: 'locations', filter: `space_id=eq.${spaceId}` },
           fanout,
         )
+        .on(
+          'postgres_changes',
+          { event: '*', schema: 'public', table: 'timelines', filter: `space_id=eq.${spaceId}` },
+          fanout,
+        )
         .subscribe();
 
       entry = { ch, listeners };
@@ -351,6 +397,9 @@ export const db = {
   createLocation,
   updateLocation,
   deleteLocation,
+  // Timeline (Chroniques)
+  getTimeline,
+  saveTimeline,
   // Characters
   getSpaceCharacters,
   createCharacter,

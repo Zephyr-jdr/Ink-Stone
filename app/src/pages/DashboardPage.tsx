@@ -1,12 +1,13 @@
 import { useState, useMemo, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, GitGraph, Plus, Copy, MapPin, Settings, Trash2, AlertTriangle } from 'lucide-react';
+import { Search, GitGraph, ScrollText, Plus, Copy, MapPin, Settings, Trash2, AlertTriangle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Header } from '@/components/layout/Header';
 import { CharacterCard } from '@/components/character/CharacterCard';
 import { CharacterForm } from '@/components/character/CharacterForm';
 import { LocationsManagerModal } from '@/components/locations/LocationsManagerModal';
 import { DeleteSpaceModal } from '@/components/modals/DeleteSpaceModal';
+import { WhatsNewModal } from '@/components/modals/WhatsNewModal';
 import { Toast } from '@/components/shared/Toast';
 import { useAppStore } from '@/stores/appStore';
 import { useCharacters } from '@/hooks/useCharacters';
@@ -36,6 +37,25 @@ export default function DashboardPage() {
   const [showForm, setShowForm] = useState(false);
   const [showLocations, setShowLocations] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
+  const [showWhatsNew, setShowWhatsNew] = useState(false);
+
+  // Annonce « Quoi de neuf » — affichée une seule fois par navigateur.
+  const WHATS_NEW_KEY = 'inkstone:whatsnew:chronicles-graph-v1';
+  useEffect(() => {
+    try {
+      if (!localStorage.getItem(WHATS_NEW_KEY)) setShowWhatsNew(true);
+    } catch {
+      // ignore (mode privé / stockage bloqué)
+    }
+  }, []);
+  const dismissWhatsNew = () => {
+    setShowWhatsNew(false);
+    try {
+      localStorage.setItem(WHATS_NEW_KEY, '1');
+    } catch {
+      // ignore
+    }
+  };
 
 
   useEffect(() => {
@@ -134,6 +154,10 @@ export default function DashboardPage() {
           <button onClick={() => navigate('/graph')} className="btn-outline">
             <GitGraph size={16} />
             {t('dashboard.graphView')}
+          </button>
+          <button onClick={() => navigate('/chronicles')} className="btn-outline">
+            <ScrollText size={16} />
+            {t('dashboard.chroniclesView')}
           </button>
           <button
             onClick={() => setShowLocations(true)}
@@ -303,6 +327,8 @@ export default function DashboardPage() {
           />
         )}
       </AnimatePresence>
+
+      <WhatsNewModal isOpen={showWhatsNew} onClose={dismissWhatsNew} />
 
 
       <Toast />

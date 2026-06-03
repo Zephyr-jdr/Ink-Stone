@@ -3,7 +3,7 @@
 // No demo seed: the app starts empty, exactly like the production backend.
 // Synchronous CRUD; consumed exclusively by `lib/db.ts`.
 // =====================================================================
-import type { Space, Character, Relation, Location } from '@/types';
+import type { Space, Character, Relation, Location, Timeline } from '@/types';
 
 const STORAGE_KEY = 'inkstone_local_data';
 
@@ -12,10 +12,11 @@ interface MockData {
   characters: Character[];
   relations: Relation[];
   locations: Location[];
+  timelines: Timeline[];
 }
 
 function emptyData(): MockData {
-  return { spaces: [], characters: [], relations: [], locations: [] };
+  return { spaces: [], characters: [], relations: [], locations: [], timelines: [] };
 }
 
 function getData(): MockData {
@@ -28,6 +29,7 @@ function getData(): MockData {
       characters: parsed.characters ?? [],
       relations: parsed.relations ?? [],
       locations: parsed.locations ?? [],
+      timelines: parsed.timelines ?? [],
     };
   } catch {
     return emptyData();
@@ -72,6 +74,7 @@ export const localDb = {
     data.relations  = data.relations.filter((r) => r.space_id !== spaceId);
     data.characters = data.characters.filter((c) => c.space_id !== spaceId);
     data.locations  = data.locations.filter((l) => l.space_id !== spaceId);
+    data.timelines  = data.timelines.filter((tl) => tl.space_id !== spaceId);
     data.spaces     = data.spaces.filter((s) => s.id !== spaceId);
     saveData(data);
   },
@@ -106,6 +109,28 @@ export const localDb = {
       if (c.location === id) c.location = undefined;
     });
     saveData(data);
+  },
+
+  // ----- Timeline (Chroniques) -----
+  getTimeline(spaceId: string): Timeline | null {
+    return getData().timelines.find((t) => t.space_id === spaceId) ?? null;
+  },
+
+  saveTimeline(
+    spaceId: string,
+    row: Pick<Timeline, 'start_year' | 'year_count' | 'entries' | 'updated_at'> & { space_id: string },
+  ): Timeline {
+    const data = getData();
+    const i = data.timelines.findIndex((t) => t.space_id === spaceId);
+    if (i === -1) {
+      const tl: Timeline = { ...row, id: uid('tl') };
+      data.timelines.push(tl);
+      saveData(data);
+      return tl;
+    }
+    data.timelines[i] = { ...data.timelines[i], ...row };
+    saveData(data);
+    return data.timelines[i];
   },
 
   // ----- Characters -----
@@ -178,7 +203,8 @@ export const localDb = {
       const snap =
         JSON.stringify(d.characters.filter((c) => c.space_id === spaceId)) +
         JSON.stringify(d.relations.filter((r) => r.space_id === spaceId)) +
-        JSON.stringify(d.locations.filter((l) => l.space_id === spaceId));
+        JSON.stringify(d.locations.filter((l) => l.space_id === spaceId)) +
+        JSON.stringify(d.timelines.filter((tl) => tl.space_id === spaceId));
       if (last && last !== snap) cb();
       last = snap;
     };
