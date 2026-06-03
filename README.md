@@ -29,6 +29,7 @@ Your group joins a shared space with an invite code and password. Everyone can c
 - **Typed relationships** — Friend, Distrust, Mentor, Companion, Acquaintance, Enemy, Rival, Family — each with a free-text detail
 - **Graph view** (Sigma.js) — nodes colored by location, edges by relationship type, PC nodes larger than NPCs. Hover to highlight connections, click to open the sheet
 - **Customizable locations** —  filter the grimoire by location
+- **NEW** — A journal to note what happens each spring, summer, autumn and winter, shared with your table.
 
 ## Stack
 
@@ -63,8 +64,8 @@ The dev server starts at <http://localhost:5173>.
 - [x] French to English
 - [x] Mobile layout improvements
 - [x] Supabase sync for real-time collaboration 
-- [ ] Improving graph view
-- [ ] Timeline view for campaign events - Thinking about it
-
+- [x] Improving graph view (Works on phone with a panel to acess wiki)
+- [x] Timeline view for campaign events - Wheel of time
+- [ ] - Tell me what to improve 
 
 [![Ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/zephyrjdr)
