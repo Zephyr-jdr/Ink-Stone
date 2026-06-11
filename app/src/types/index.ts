@@ -80,7 +80,11 @@ export interface Space {
   id: string;
   name: string;
   invite_code: string;
-  password_hash: string;
+  /**
+   * Only present in the localStorage fallback. With the Supabase backend the
+   * hash never leaves the server — auth RPCs return the space WITHOUT it.
+   */
+  password_hash?: string;
   created_at: string;
   updated_at: string;
 }

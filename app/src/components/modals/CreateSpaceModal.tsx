@@ -32,8 +32,8 @@ export function CreateSpaceModal({ isOpen, onClose }: CreateSpaceModalProps) {
     setError('');
 
     try {
-      const space = await createSpace(name.trim(), password);
-      setCreatedSpace(space);
+      const session = await createSpace(name.trim(), password);
+      setCreatedSpace(session);
     } catch (err) {
       void err;
       setError(t('createSpace.errorGeneric'));
@@ -45,10 +45,10 @@ export function CreateSpaceModal({ isOpen, onClose }: CreateSpaceModalProps) {
   // Called when the user acknowledges the login code modal — only THEN we enter the space.
   const handleSuccessClose = () => {
     if (!createdSpace) return;
-    const space = createdSpace;
+    const session = createdSpace;
     setCreatedSpace(null);
     onClose();
-    enterSpace(space, true);
+    enterSpace(session);
     navigate('/dashboard');
   };
 
@@ -124,8 +124,8 @@ export function CreateSpaceModal({ isOpen, onClose }: CreateSpaceModalProps) {
       {createdSpace && (
         <SpaceCreatedModal
           isOpen={!!createdSpace}
-          spaceName={createdSpace.name}
-          loginCode={createdSpace.invite_code}
+          spaceName={createdSpace.space.name}
+          loginCode={createdSpace.space.invite_code}
           onClose={handleSuccessClose}
         />
       )}

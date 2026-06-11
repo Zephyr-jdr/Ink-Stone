@@ -1,35 +1,35 @@
 import { useCallback } from 'react';
 import { db } from '@/lib/db';
 import { useAppStore } from '@/stores/appStore';
-import type { Space } from '@/types';
+import type { SpaceSession } from '@/types';
 
 export function useSpace() {
   const { setSession } = useAppStore();
 
-  // Creates a space WITHOUT setting the session yet — caller decides when to enter.
+  // Creates a space WITHOUT setting the session yet — caller decides when to
+  // enter. Returns the full session (space + server-issued token + isAdmin).
   const createSpace = useCallback(
-    async (name: string, password: string) => {
-      const space = await db.createSpace(name, password);
-      return space;
+    async (name: string, password: string): Promise<SpaceSession> => {
+      return db.createSpace(name, password);
     },
     [],
   );
 
-  // Enter a space (set the session). Use after createSpace once user acknowledges the login code.
+  // Enter a space (set the session). Use after createSpace once the user
+  // acknowledges the login code. The token comes from the server, NOT minted
+  // in the browser — it is what authorises every subsequent read/write.
   const enterSpace = useCallback(
-    (space: Space, isAdmin: boolean) => {
-      const token = btoa(`${space.id}:${Date.now()}`);
-      setSession({ space, isAdmin, token });
+    (session: SpaceSession) => {
+      setSession(session);
     },
     [setSession],
   );
 
   const joinSpace = useCallback(
     async (inviteCode: string, password: string) => {
-      const space = await db.joinSpace(inviteCode, password);
-      const token = btoa(`${space.id}:${Date.now()}`);
-      setSession({ space, isAdmin: false, token });
-      return space;
+      const session = await db.joinSpace(inviteCode, password);
+      setSession(session);
+      return session.space;
     },
     [setSession],
   );
@@ -45,4 +45,3 @@ export function useSpace() {
 
   return { createSpace, enterSpace, joinSpace, deleteSpace };
 }
-
